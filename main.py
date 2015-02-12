@@ -25,20 +25,23 @@ class Main():
             self.fileReaderStep1()
             ngrams.Ngrams(self.corpusList, self.n, self.m)
         elif self.case == '2.1':
-            self.printer1()
+            self.printer21()
+            #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.2':
-            self.printer1()
+            self.printer22()
+            #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.3':
-            self.printer1()
+            self.printer23()
+            #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.4':
             self.printer24()
-
+            #TODO: like case 1, classes or methods need to be added
 
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
         # Make a nice way to handle command line arguments
         parser = argparse.ArgumentParser()
-        # -corpus argument
+        # -corpus argumentgit
         parser.add_argument('-corpus', required=True,
         help='Provide a text corpus file in the .txt format to perform an N-gram calculation.')
         # -n argument
@@ -73,13 +76,16 @@ class Main():
             self.case = '1'
         elif self.n > 0:
             print 'Do step 2.1'
+            self.case = '2.1'
         elif self.cp != None:
             print 'Do step 2.2'
-            print self.cp
+            self.case = '2.2'
         elif self.sp != None:
             print 'Do step 2.3'
+            self.case = '2.3'
         elif self.perm == True:
             print 'Do step 2.4'
+            self.case = '2.4'
         else:
            print 'The program has found no options, nothing to do here.'
            print 'Please read the documentation.'
@@ -96,9 +102,14 @@ class Main():
         print 'We will calculate the N-Gram with sequences of length: ' + str(self.n)
         print 'The number of most frequent sequences (m) is: ' + str(self.m)
         print
-
+    def printer21(self):
+        print 'step 2.1 is not implemented yet'
+    def printer22(self):
+        print 'step 2.2 is not implemented yet'
+    def printer23(self):
+        print 'step 2.3 is not implemented yet'
     def printer24(self):
-        print
+        print 'step 2.4 is not fully implemented yet'
         print 'The program will now calculate permutations for you'
         print 'The used corpusfile is: ' + self.corpus
         print
