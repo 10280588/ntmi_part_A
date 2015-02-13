@@ -56,3 +56,18 @@ class Ngrams():
 		print
 		print 'The total sum of all sequence frequencies is: ' + str(self.sumFreq)
 
+
+    # find all permutations of a list and calculate their probability
+    def probabilityOfPermutations(list):
+        print 'calculate probabilities of all permutations of words: ' = list
+        #find all permutations
+        perms = itertools.permutations(list)
+        for perm in perms:
+        	#add start and stop signs
+        	perm = {'<s>'}+perm+{'</s>'}
+        	#calculate probabilities of permutation /// needs to be implemented
+            #prob = calculateProbability(perm)
+            print
+            print 'perm: ' + perm
+            print 'probability ' + prob
+            print ' -------------------------------'
