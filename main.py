@@ -9,8 +9,8 @@ import ngrams
 class Main():
     def __init__(self, step):
         self.corpus = ''
-        self.n = 0
-        self.m = 0
+        self.n = 1
+        self.m = 2
         self.corpusList = []
         self.cp = None
         self.sp = None
@@ -35,6 +35,8 @@ class Main():
             #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.4':
             self.printer24()
+            boe = ngrams.Ngrams(['one','two','three'], 1, 2)
+            boe.probabilityOfPermutations(boe.corpusList)
             #TODO: like case 1, classes or methods need to be added
 
     #Takes care of provided arguments, if none given use default!

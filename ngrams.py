@@ -2,6 +2,8 @@
 # Copyright: Menno van Leeuwen (10280588)
 # Assignment: NTMI step 1
 #
+import itertools
+
 class Ngrams():
 	#make variables and call relevant methods
 	def __init__(self, corpus, n, m):
@@ -52,22 +54,26 @@ class Ngrams():
 					print self.sorted_nGrams[i]
 			else:
 				print 'There were only ' + str(i) + ' combinations, so they all fitted in your top ' + str(self.m) + ' list.'
-				break 
+				break
 		print
 		print 'The total sum of all sequence frequencies is: ' + str(self.sumFreq)
 
 
-    # find all permutations of a list and calculate their probability
-    def probabilityOfPermutations(list):
-        print 'calculate probabilities of all permutations of words: ' = list
-        #find all permutations
-        perms = itertools.permutations(list)
-        for perm in perms:
-        	#add start and stop signs
-        	perm = {'<s>'}+perm+{'</s>'}
-        	#calculate probabilities of permutation /// needs to be implemented
-            #prob = calculateProbability(perm)
-            print
-            print 'perm: ' + perm
-            print 'probability ' + prob
-            print ' -------------------------------'
+	# find all permutations of a list and calculate their probability
+	def probabilityOfPermutations(self, listo):
+		print 'calculate probabilities of all permutations of words: ' #= list
+		#find all permutations
+		perms = itertools.permutations(listo)
+		listperms = []
+		for perm in perms:
+			#add start and stop signs
+			print perm
+			perm = list(perm)
+			perm = '<s>' + str(perm) + '</s>'
+			listperms.append(perm)
+			#calculate probabilities of permutation /// needs to be implemented
+			#prob = calculateProbability(perm)
+			print
+			print 'perm: ' + str(perm)
+			#print 'probability ' + prob
+			print ' -------------------------------'
