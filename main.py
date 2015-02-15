@@ -47,15 +47,18 @@ class Main():
             self.printer22()
             self.fileReader("paragraph")
             self.fileReader("paragraph2")
-            self.fileReader("lines")
             ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
             ngrams.Ngrams(self.corpusList, self.n-1, self.m, self.sorted_nGrams2)
-            prob.Prob(self.cp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
+            prob.Prob(self.case, self.cp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
             self.printResult22()
             #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.3':
             self.printer23()
-            #TODO: like case 1, classes or methods need to be added
+            self.fileReader("paragraph")
+            self.fileReader("paragraph2")
+            ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
+            ngrams.Ngrams(self.corpusList2, self.n-1, self.m, self.sorted_nGrams2)
+            prob.Prob(self.case, self.sp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
         elif self.case == '2.4':
             self.printer24()
             perm.Permutation(self.corpus)
@@ -258,7 +261,6 @@ class Main():
                 tmp.append(line.split())
         for x in range(1, n):
             tmp.append(["</s>"])
-        f.close()
         tmp = [item for sublist in tmp for item in sublist]
         if texttype == "paragraph":
             self.corpusList = tmp
