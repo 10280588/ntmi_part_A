@@ -6,7 +6,7 @@ import argparse
 import sys
 import ngrams
 import prob
-
+import perm
 class Main():
     def __init__(self):
         self.corpus = ''
@@ -58,7 +58,7 @@ class Main():
             #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.4':
             self.printer24()
-            #TODO: like case 1, classes or methods need to be added
+            perm.Permutation(self.corpus)
 
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
@@ -160,7 +160,7 @@ class Main():
                     print self.sorted_nGrams[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top ' + str(self.m) + ' list.'
-                break 
+                break
         print
 
         print 'The sum of all frequencies of the sequences is: ' + str(self.sumFreq)
@@ -181,7 +181,7 @@ class Main():
                     print self.sorted_nGrams[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 10 list.'
-                break 
+                break
         print
         print 'Now for the value N-1'
         print ''
@@ -194,7 +194,7 @@ class Main():
                     print self.sorted_nGrams2[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 10 list.'
-                break 
+                break
         print
         #print 'The total sum of all sequence frequencies is: ' + str(self.sumFreq)
     #Opens our corpus.txt file and converts it to a list of words.
@@ -210,7 +210,7 @@ class Main():
                     print self.probDict[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 25 list.'
-                break 
+                break
         print
     def fileReaderStep1(self):
         f = open(self.corpus, 'r')
@@ -222,7 +222,7 @@ class Main():
     def fileReader(self, texttype):
         if texttype == "paragraph" or texttype == "paragraph2":
             self.changeText(texttype)
-                
+
         elif texttype == "lines":
             f = open(self.cp, 'r')
             for line in f:
@@ -256,7 +256,7 @@ class Main():
                     tmp.append(["<s>"])
             else:
                 tmp.append(line.split())
-        for x in range(1, n):               
+        for x in range(1, n):
             tmp.append(["</s>"])
         f.close()
         tmp = [item for sublist in tmp for item in sublist]
