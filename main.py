@@ -48,7 +48,7 @@ class Main():
             self.fileReader("paragraph")
             self.fileReader("paragraph2")
             ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
-            ngrams.Ngrams(self.corpusList, self.n-1, self.m, self.sorted_nGrams2)
+            ngrams.Ngrams(self.corpusList2, self.n-1, self.m, self.sorted_nGrams2)
             prob.Prob(self.case, self.cp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
             self.printResult22()
             #TODO: like case 1, classes or methods need to be added
@@ -62,6 +62,11 @@ class Main():
         elif self.case == '2.4':
             self.printer24()
             perm.Permutation(self.corpus)
+        elif self.case == '3':
+            self.fileReader("paragraph")
+            ngrams.Ngrams(self.corpusList, 2, self.m, self.sorted_nGrams)
+            self.sorted_nGrams = {key: value+1 for (key, value) in self.sorted_nGrams.iteritems()}
+            #print self.sorted_nGrams
 
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
@@ -84,6 +89,7 @@ class Main():
         help='Provide a text corpus file in the .txt format')
         # -scored-permutations argument
         parser.add_argument('-scored-permutations', action='store_true')
+        parser.add_argument('-smoothing', help='Provide a smoothing method to get rid of zero entries')
 
         args = parser.parse_args()
         self.corpus = args.corpus
@@ -92,7 +98,8 @@ class Main():
         self.cp = args.conditional_prob_file
         self.sp = args.sequence_prob_file
         self.perm = args.scored_permutations
-
+        self.smoothing = args.smoothing
+        
     #Decides what we are going to do, given the provided arguments.
     def caseOptions(self):
         print
@@ -109,6 +116,12 @@ class Main():
         elif self.perm == True:
             print 'Do step 2.4'
             self.case = '2.4'
+        elif self.smoothing == 'no' or self.smoothing == 'add1' or self.smoothing == 'gt':
+            self.case = '3'
+            print 'Do step 3'
+        elif self.smoothing != 'no' or self.smoothing == 'add1' or self.smoothing == 'gt':
+            print 'The argument for the smoothing algorithm is incorrect, use \'no\', \'add1\' or \'gt\''
+            sys.exit()
         elif self.n > 0:
             print 'Do step 2.1'
             self.case = '2.1'
@@ -146,7 +159,6 @@ class Main():
         print 'The program will now calculate permutations for you'
         print 'The used corpusfile is: ' + self.corpus
         print
-
 
     def printResult1(self):
         self.sorted_nGrams = sorted(self.sorted_nGrams.items(), key=lambda nGram: nGram[1], reverse=True)

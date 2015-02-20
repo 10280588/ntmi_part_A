@@ -10,11 +10,11 @@ class Ngrams():
 		self.m = m
 		self.corpusList = corpus
 		self.tmp = tmp
-		self.sorted_nGrams = tmp
+		self.sorted_nGrams = {}
 		self.sumFreq = 0
 
 		self.calculateNGram()
-		self.tmp = self.mostFrequent()
+		self.mostFrequent()
 		self.sumOfFrequencies()
 		#self.resultPrinter()
 
