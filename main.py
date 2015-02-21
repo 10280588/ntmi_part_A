@@ -38,10 +38,7 @@ class Main():
             # create instance of Ngram class
             gramInstance = ngrams.Ngrams()
             # create nGram
-            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
-            # calculate the most frequent
-            mostFreq = gramInstance.mostFrequent(createdNgram)
-            # Calculate the sum
+            createdNgram = grlineum
             sumOfFreq = gramInstance.sumOfFrequencies(mostFreq)
             # Print all results, which are stored in the variables
             self.printResult1(mostFreq,sumOfFreq)
@@ -62,15 +59,15 @@ class Main():
             self.printer22()
             reader = filereader.Reader()
             corpusList = reader.fileReader(self.corpus, self.n)
-            corpusList3 = reader.fileReader(self.corpus, self.n-1)
-            corpusListCPFile1 = reader.fileReader(self.cp, self.n)
-            corpusListCPFile2 = reader.fileReader(self.cp, self.n-1)
+            lineList = reader.lineReader(self.cp, self.n)
+            #create the two ngrams
             gramInstance = ngrams.Ngrams()
-            createdNgram = gramInstance.calculateNGram(corpusList2, self.n, self.m)
-            createdNgramMin1 = gramInstance.calculateNGram(corpusList2, self.n-1, self.m)
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1, self.m)
+            # Calculate the probability
             probInstance = prob.Prob()
-            probInstance.calculateProb(createdNgram, createdNgramMin1, self.n)
-            self.printResult22()
+            probList = probInstance.calculateProb(createdNgram, createdNgramMin1, lineList, self.n)
+            self.printResult22(probList)
             #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.3':
             #self.printer23()
@@ -244,16 +241,16 @@ class Main():
         print
         #print 'The total sum of all sequence frequencies is: ' + str(self.sumFreq)
     #Opens our corpus.txt file and converts it to a list of words.
-    def printResult22(self):
-        self.probDict = sorted(self.probDict.items(), key=lambda nGram: nGram[1], reverse=False)
+    def printResult22(self, probList):
+        probList = sorted(probList.items(), key=lambda probList: probList[1], reverse=False)
         print 'We have calculated N-gram and the N-1-Gram.'
         print 'Then probability is calculated.'
         print 'We will now display the 25 sequences with the LOWEST probability.'
         for i in range(0, 25):
             #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
-            if i < len(self.probDict):
-                if self.probDict[i][0] != '':
-                    print self.probDict[i]
+            if i < len(probList):
+                if probList[i][0] != '':
+                    print probList[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 25 list.'
                 break

@@ -31,32 +31,22 @@ class Reader():
 
         return corpusList
 
-        #elif texttype == "lines":
-        #    f = open(corpus, 'r')
-        #    for line in f:
-        #       lst = line.split()
-        #       if(len(lst) == n):
-        #            if line.strip():
-        #                for x in range(1, n):
-        #                    self.probList.append(["<s>"])
-        #                    self.probList.append(lst)
-        #                    for x in range(1, n):
-        #                        self.probList.append(["</s>"])
-        #                    self.probList.append(" ")
-        #    f.close()
-        #    self.probList = [item for sublist in self.probList for item in sublist]
 
-        return corpusList
     def changeText(self, corpus, n):
         corpusList = []
-        #if texttype == "paragraph":
-        #    n = self.n
-        #elif texttype == "paragraph2":
-        #    n = self.n-1
 
 
-        #
-        #if texttype == "paragraph":
-        #    self.corpusList = tmp
-        #if texttype == "paragraph2":
-        #    self.corpusList2 = tmp
+    def lineReader(self, corpus, n):
+        lineList = []
+        f = open(corpus, 'r')
+        for line in f:
+            lineLength = len(line.split())
+            prefix = '<s> ' * (lineLength-1)
+            postfix = ' </s>' * (lineLength-1)
+            line = line.rstrip()
+            line = prefix + line + postfix
+            if(lineLength == n):
+                if line.strip():
+                    lineList.append(line)
+        f.close()
+        return lineList
