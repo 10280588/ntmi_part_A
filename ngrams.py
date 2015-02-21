@@ -8,7 +8,7 @@ class Ngrams():
 		print 'Instance of Ngram class was created'
 	# The real calculation of occurences is done in this method
 	def calculateNGram(self, corpus, n, m):
-		print 'Calculating N-Gram'
+		print 'Calculating N-Gram with n = ' + str(n)
 		ngrams = {}
 		for i in range(0, len(corpus) - (n-1)):
 			sequence = corpus[i];

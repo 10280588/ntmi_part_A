@@ -19,19 +19,16 @@ class Main():
         self.corpus = ''
         self.n = 0
         self.m = 10
-        self.corpusList = []
         self.cp = None
         self.sp = None
         self.perm = False
         self.case = ''
-        self.corpusList = []
         self.corpusList2 = []
         self.probList = []
         self.probDict = {}
         self.tmp = []
         self.sorted_nGrams = {}
         self.sorted_nGrams2 = {}
-        self.sumFreq = 0
 
         self.argumentReader()
         self.caseOptions()
@@ -42,6 +39,7 @@ class Main():
             reader = filereader.Reader()
             #Actually read the file
             corpusList = reader.fileReaderStep1(self.corpus)
+            print corpusList
             # create instance of Ngram class
             gramInstance = ngrams.Ngrams()
             # create nGram
@@ -54,12 +52,21 @@ class Main():
             self.printResult1(mostFreq,sumOfFreq)
         elif self.case == '2.1':
             self.printer21()
-            self.fileReaderStep1()
-            self.fileReader("paragraph")
-            self.fileReader("paragraph2")
-            ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
-            ngrams.Ngrams(self.corpusList, self.n-1, self.m, self.sorted_nGrams2)
-            self.printResult21()
+            #Create an instance so we can read the fileReader
+            reader = filereader.Reader()
+            #Actually read the file
+            corpusList = reader.fileReaderStep1(self.corpus)
+            print corpusList
+            corpusList2 = reader.fileReader(self.corpus, self.n)
+            print corpusList2
+            corpusList3 = reader.fileReader(self.corpus, self.n-1)
+            print corpusList3
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusList2, self.n, self.m)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList2, self.n-1, self.m)
+            mostFreq = gramInstance.mostFrequent(createdNgram)
+            mostFreqMin1 = gramInstance.mostFrequent(createdNgramMin1)
+            self.printResult21(mostFreq, mostFreqMin1)
             #TODO: DONE!
         elif self.case == '2.2':
             self.printer22()
@@ -137,16 +144,15 @@ class Main():
         elif self.smoothing == 'no' or self.smoothing == 'add1' or self.smoothing == 'gt':
             self.case = '3'
             print 'Do step 3'
-        elif self.smoothing != 'no' or self.smoothing == 'add1' or self.smoothing == 'gt':
-            print 'The argument for the smoothing algorithm is incorrect, use \'no\', \'add1\' or \'gt\''
-            sys.exit()
         elif self.n > 0:
             print 'Do step 2.1'
             self.case = '2.1'
         else:
            print 'The program has found no options, nothing to do here.'
            print 'Please read the documentation.'
+           sys.exit()
         print '-----------------------'
+
 
     #Prints an initial start message as well as the used values.
     def printer1(self):
@@ -196,18 +202,16 @@ class Main():
         print
         #print 'The total sum of all sequence frequencies is: ' + str(self.sumFreq)
     #Opens our corpus.txt file and converts it to a list of words.
-    def printResult21(self):
+    def printResult21(self, mostFreq, mostFreqMin1):
         print 'Calculations are done.'
-        self.sorted_nGrams = sorted(self.sorted_nGrams.items(), key=lambda nGram: nGram[1], reverse=True)
-        self.sorted_nGrams2 = sorted(self.sorted_nGrams2.items(), key=lambda nGram: nGram[1], reverse=True)
         print ''
         print 'The top 10 list of most occuring sequences ([word], [frequency]) for the provided N:'
         #Print the m most frequent ngrams.
         for i in range(0, 10):
             #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
-            if i < len(self.sorted_nGrams):
-                if self.sorted_nGrams[i][0] != '':
-                    print self.sorted_nGrams[i]
+            if i < len(mostFreq):
+                if mostFreq[i][0] != '':
+                    print mostFreq[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 10 list.'
                 break
@@ -218,9 +222,9 @@ class Main():
         #Print the m most frequent ngrams.
         for i in range(0, 10):
             #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
-            if i < len(self.sorted_nGrams2):
-                if self.sorted_nGrams2[i][0] != '':
-                    print self.sorted_nGrams2[i]
+            if i < len(mostFreqMin1):
+                if mostFreqMin1[i][0] != '':
+                    print mostFreqMin1[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 10 list.'
                 break
