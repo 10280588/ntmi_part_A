@@ -32,8 +32,16 @@ class Main():
         if self.case == '1':
             self.printer1()
             self.fileReaderStep1()
-            ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
-            self.printResult1()
+            # create instance of class
+            gramInstance = ngrams.Ngrams()
+            # create nGram
+            createdNgram = gramInstance.calculateNGram(self.corpusList, self.n, self.m)
+            # calculate the most frequent
+            mostFreq = gramInstance.mostFrequent(createdNgram)
+            # Calculate the sum
+            sumOfFreq = gramInstance.sumOfFrequencies(mostFreq)
+            # Print all results, which are stored in the variables
+            self.printResult1(mostFreq,sumOfFreq)
         elif self.case == '2.1':
             self.printer21()
             self.fileReaderStep1()
@@ -99,7 +107,7 @@ class Main():
         self.sp = args.sequence_prob_file
         self.perm = args.scored_permutations
         self.smoothing = args.smoothing
-        
+
     #Decides what we are going to do, given the provided arguments.
     def caseOptions(self):
         print
@@ -160,25 +168,21 @@ class Main():
         print 'The used corpusfile is: ' + self.corpus
         print
 
-    def printResult1(self):
-        self.sorted_nGrams = sorted(self.sorted_nGrams.items(), key=lambda nGram: nGram[1], reverse=True)
-        for i in range(0, len(self.sorted_nGrams)):
-            self.sumFreq = self.sumFreq + self.sorted_nGrams[i][1]
+    def printResult1(self, mostFrequent, sumOfFreq):
         print 'Calculations are done.'
         print
         print 'The top ' + str(self.m) + ' list of most occuring sequences ([word], [frequency]):'
         # Print the m most frequent ngrams.
         for i in range(0, self.m):
             #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
-            if i < len(self.sorted_nGrams):
-                if self.sorted_nGrams[i][0] != '':
-                    print self.sorted_nGrams[i]
+            if i < len(mostFrequent):
+                if mostFrequent[i][0] != '':
+                    print mostFrequent[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top ' + str(self.m) + ' list.'
                 break
         print
-
-        print 'The sum of all frequencies of the sequences is: ' + str(self.sumFreq)
+        print 'The sum of all frequencies of the sequences is: ' + str(sumOfFreq)
         print
         #print 'The total sum of all sequence frequencies is: ' + str(self.sumFreq)
     #Opens our corpus.txt file and converts it to a list of words.

@@ -4,41 +4,32 @@
 #
 class Ngrams():
 	#make variables and call relevant methods
-	def __init__(self, corpus, n, m, tmp):
-		self.tmp = tmp
-		self.n = n
-		self.m = m
-		self.corpusList = corpus
-		self.tmp = tmp
-		self.sorted_nGrams = {}
-		self.sumFreq = 0
-
-		self.calculateNGram()
-		self.mostFrequent()
-		self.sumOfFrequencies()
-		#self.resultPrinter()
-
+	def __init__(self):
+		print 'Instance of Ngram class was created'
 	# The real calculation of occurences is done in this method
-	def calculateNGram(self):
+	def calculateNGram(self, corpus, n, m):
 		print 'Calculating N-Gram'
-		for i in range(0, len(self.corpusList) - (self.n-1)):
-			sequence = self.corpusList[i];
-			for j in range(1, self.n):
-				sequence = sequence + " " + self.corpusList[i+j]
-			if (sequence in self.tmp):
-				self.tmp.update({sequence:(self.tmp[sequence]+1)})
+		ngrams = {}
+		for i in range(0, len(corpus) - (n-1)):
+			sequence = corpus[i];
+			for j in range(1,n):
+				sequence = sequence + " " + corpus[i+j]
+			if (sequence in ngrams):
+				ngrams.update({sequence:(ngrams[sequence]+1)})
 			else:
 				if not "</s> <s>" in sequence and not "<s> </s>" in sequence:
-					self.tmp.update({sequence:1})
-		
+					ngrams.update({sequence:1})
+		return ngrams
+
 	# Look for most frequent occurences, and safe them.
-	def mostFrequent(self):
-		self.sorted_nGrams = sorted(self.tmp.items(), key=lambda nGram: nGram[1], reverse=True)
+	def mostFrequent(self, ngrams):
+		print 'pver '
+		sorted_nGrams = sorted(ngrams.items(), key=lambda nGram: nGram[1], reverse=True)
+		return sorted_nGrams
 
 	# Sum up all frequencies, for n = 1 this should be the same as the number of words
-	def sumOfFrequencies(self):
-		for i in range(0, len(self.sorted_nGrams)):
-			self.sumFreq = self.sumFreq + self.sorted_nGrams[i][1]
-
-	# Print all our findings
-		
+	def sumOfFrequencies(self, sorted_nGrams):
+		sumFreq = 0
+		for i in range(0, len(sorted_nGrams)):
+			sumFreq = sumFreq + sorted_nGrams[i][1]
+		return sumFreq
