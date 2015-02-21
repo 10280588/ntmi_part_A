@@ -10,7 +10,6 @@ import perm
 import smooth
 import filereader
 
-
 # Class reads in arguments and then selects the correct case.
 # Besides this a lot of information is printed.
 # Actual program is devided among other classes.
