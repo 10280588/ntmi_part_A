@@ -65,7 +65,7 @@ class Main():
         elif self.case == '3':
             self.fileReader("paragraph")
             ngrams.Ngrams(self.corpusList, 2, self.m, self.sorted_nGrams)
-            self.sorted_nGrams = {key: value+1 for (key, value) in self.sorted_nGrams.iteritems()}
+            self.sorted_nGrams = {key: value+1 for (key, value) in self.sorted_nGrams.iteritems()} #(for probability, divide by c(Wi-1) + V)
             #print self.sorted_nGrams
 
     #Takes care of provided arguments, if none given use default!

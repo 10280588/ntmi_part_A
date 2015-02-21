@@ -20,7 +20,7 @@ class Prob():
             for line in f:
                 probs = self.calculateProbabilityOfString(line)
                 self.probDict.update({line:probs})
-            print self.probDict
+            #print self.probDict
         
     # Calculates the probability of an N-gram given an (N-1)-Gram of a file. Uses only sentences of length n (starts/stops not included)    
     def calculateProb(self):
@@ -30,6 +30,7 @@ class Prob():
             strList = line.split()
             if len(strList) == self.n: # Doesn't print a lot when low n is chosen with text file with long lines (only lines of length n).
                 line = ['<s>' for s in xrange(self.n-1)] + strList + ['</s>' for s in xrange(self.n-1)]
+                print line
                 for i in range(0, len(line) - self.n):
                     self.probDict.update({' '.join(line[i:i+self.n]):0})
                     entryAmount = self.sorted_nGrams.get(' '.join(line[i:i+self.n]), None)
@@ -38,7 +39,7 @@ class Prob():
                         if entryAmount2 != None:
                             odds = entryAmount/entryAmount2
                             self.probDict.update({' '.join(line[i:i+self.n]):odds})
-        print self.probDict
+        #print self.probDict
         
     # Calculates the probability of a sentence by multiplying the probability of sequences of N-grams               
     def calculateProbabilityOfString(self, line):
