@@ -7,66 +7,94 @@ import sys
 import ngrams
 import prob
 import perm
+import smooth
+import filereader
+
+
+# Class reads in arguments and then selects the correct case.
+# Besides this a lot of information is printed.
+# Actual program is devided among other classes.
+
 class Main():
     def __init__(self):
         self.corpus = ''
         self.n = 0
         self.m = 10
-        self.corpusList = []
         self.cp = None
         self.sp = None
         self.perm = False
         self.case = ''
-        self.corpusList = []
-        self.corpusList2 = []
-        self.probList = []
-        self.probDict = {}
-        self.tmp = []
-        self.sorted_nGrams = {}
-        self.sorted_nGrams2 = {}
-        self.sumFreq = 0
 
         self.argumentReader()
         self.caseOptions()
 
         if self.case == '1':
             self.printer1()
-            self.fileReaderStep1()
-            ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
-            self.printResult1()
+            #Create an instance so we can read the fileReader
+            reader = filereader.Reader()
+            #Actually read the file
+            corpusList = reader.fileReaderStep1(self.corpus)
+            print corpusList
+            # create instance of Ngram class
+            gramInstance = ngrams.Ngrams()
+            # create nGram
+            createdNgram = grlineum
+            sumOfFreq = gramInstance.sumOfFrequencies(mostFreq)
+            # Print all results, which are stored in the variables
+            self.printResult1(mostFreq,sumOfFreq)
         elif self.case == '2.1':
             self.printer21()
-            self.fileReaderStep1()
-            self.fileReader("paragraph")
-            self.fileReader("paragraph2")
-            ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
-            ngrams.Ngrams(self.corpusList, self.n-1, self.m, self.sorted_nGrams2)
-            self.printResult21()
+            #Create an instance so we can read the fileReader
+            reader = filereader.Reader()
+            #Actually read the file
+            corpusList = reader.fileReader(self.corpus, self.n)
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1, self.m)
+            mostFreq = gramInstance.mostFrequent(createdNgram)
+            mostFreqMin1 = gramInstance.mostFrequent(createdNgramMin1)
+            self.printResult21(mostFreq, mostFreqMin1)
             #TODO: DONE!
         elif self.case == '2.2':
             self.printer22()
-            self.fileReader("paragraph")
-            self.fileReader("paragraph2")
-            ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
-            ngrams.Ngrams(self.corpusList2, self.n-1, self.m, self.sorted_nGrams2)
-            prob.Prob(self.case, self.cp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
-            self.printResult22()
+            reader = filereader.Reader()
+            corpusList = reader.fileReader(self.corpus, self.n)
+            lineList = reader.lineReader(self.cp, self.n)
+            #create the two ngrams
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1, self.m)
+            # Calculate the probability
+            probInstance = prob.Prob()
+            probList = probInstance.calculateProb(createdNgram, createdNgramMin1, lineList, self.n)
+            self.printResult22(probList)
             #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.3':
             #self.printer23()
-            self.fileReader("paragraph")
-            self.fileReader("paragraph2")
             ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
             ngrams.Ngrams(self.corpusList2, self.n-1, self.m, self.sorted_nGrams2)
             prob.Prob(self.case, self.sp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
         elif self.case == '2.4':
             self.printer24()
             perm.Permutation(self.corpus)
-        elif self.case == '3':
-            self.fileReader("paragraph")
-            ngrams.Ngrams(self.corpusList, 2, self.m, self.sorted_nGrams)
-            self.sorted_nGrams = {key: value+1 for (key, value) in self.sorted_nGrams.iteritems()} #(for probability, divide by c(Wi-1) + V)
+        elif self.case == '3add1':
+            #TODO Add nice print statements
+            print '3add1'
+            reader = filereader.Reader()
+            corpusList = reader.fileReader(self.corpus, self.n)
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
+
+            #TODO: Add correct ngram to be smoothed
+            smoothInstance = smooth.Smooth()
+            NgramSmoothed = smoothInstance.add1(createdNgram)
+            print NgramSmoothed
             #print self.sorted_nGrams
+        elif self.case == '3gt':
+            print 'Todo 3GT'
+        elif self.case == '3no':
+            print 'Todo 3 no'
+
 
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
@@ -99,7 +127,7 @@ class Main():
         self.sp = args.sequence_prob_file
         self.perm = args.scored_permutations
         self.smoothing = args.smoothing
-        
+
     #Decides what we are going to do, given the provided arguments.
     def caseOptions(self):
         print
@@ -116,19 +144,24 @@ class Main():
         elif self.perm == True:
             print 'Do step 2.4'
             self.case = '2.4'
-        elif self.smoothing == 'no' or self.smoothing == 'add1' or self.smoothing == 'gt':
-            self.case = '3'
-            print 'Do step 3'
-        elif self.smoothing != 'no' or self.smoothing == 'add1' or self.smoothing == 'gt':
-            print 'The argument for the smoothing algorithm is incorrect, use \'no\', \'add1\' or \'gt\''
-            sys.exit()
+        elif self.smoothing == 'no':
+            self.case = '3no'
+            print 'Do step 3, with no smoothing'
+        elif self.smoothing == 'add1':
+            self.case = '3add1'
+            print 'Do step 3, with add1 smoothing'
+        elif self.smoothing == 'gt':
+            self.case = '3gt'
+            print 'Do step 3, with Good-Turing smoothing'
         elif self.n > 0:
             print 'Do step 2.1'
             self.case = '2.1'
         else:
            print 'The program has found no options, nothing to do here.'
            print 'Please read the documentation.'
+           sys.exit()
         print '-----------------------'
+
 
     #Prints an initial start message as well as the used values.
     def printer1(self):
@@ -160,40 +193,34 @@ class Main():
         print 'The used corpusfile is: ' + self.corpus
         print
 
-    def printResult1(self):
-        self.sorted_nGrams = sorted(self.sorted_nGrams.items(), key=lambda nGram: nGram[1], reverse=True)
-        for i in range(0, len(self.sorted_nGrams)):
-            self.sumFreq = self.sumFreq + self.sorted_nGrams[i][1]
+    def printResult1(self, mostFrequent, sumOfFreq):
         print 'Calculations are done.'
         print
         print 'The top ' + str(self.m) + ' list of most occuring sequences ([word], [frequency]):'
         # Print the m most frequent ngrams.
         for i in range(0, self.m):
             #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
-            if i < len(self.sorted_nGrams):
-                if self.sorted_nGrams[i][0] != '':
-                    print self.sorted_nGrams[i]
+            if i < len(mostFrequent):
+                if mostFrequent[i][0] != '':
+                    print mostFrequent[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top ' + str(self.m) + ' list.'
                 break
         print
-
-        print 'The sum of all frequencies of the sequences is: ' + str(self.sumFreq)
+        print 'The sum of all frequencies of the sequences is: ' + str(sumOfFreq)
         print
         #print 'The total sum of all sequence frequencies is: ' + str(self.sumFreq)
     #Opens our corpus.txt file and converts it to a list of words.
-    def printResult21(self):
+    def printResult21(self, mostFreq, mostFreqMin1):
         print 'Calculations are done.'
-        self.sorted_nGrams = sorted(self.sorted_nGrams.items(), key=lambda nGram: nGram[1], reverse=True)
-        self.sorted_nGrams2 = sorted(self.sorted_nGrams2.items(), key=lambda nGram: nGram[1], reverse=True)
         print ''
         print 'The top 10 list of most occuring sequences ([word], [frequency]) for the provided N:'
         #Print the m most frequent ngrams.
         for i in range(0, 10):
             #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
-            if i < len(self.sorted_nGrams):
-                if self.sorted_nGrams[i][0] != '':
-                    print self.sorted_nGrams[i]
+            if i < len(mostFreq):
+                if mostFreq[i][0] != '':
+                    print mostFreq[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 10 list.'
                 break
@@ -204,77 +231,26 @@ class Main():
         #Print the m most frequent ngrams.
         for i in range(0, 10):
             #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
-            if i < len(self.sorted_nGrams2):
-                if self.sorted_nGrams2[i][0] != '':
-                    print self.sorted_nGrams2[i]
+            if i < len(mostFreqMin1):
+                if mostFreqMin1[i][0] != '':
+                    print mostFreqMin1[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 10 list.'
                 break
         print
         #print 'The total sum of all sequence frequencies is: ' + str(self.sumFreq)
     #Opens our corpus.txt file and converts it to a list of words.
-    def printResult22(self):
-        self.probDict = sorted(self.probDict.items(), key=lambda nGram: nGram[1], reverse=False)
+    def printResult22(self, probList):
+        probList = sorted(probList.items(), key=lambda probList: probList[1], reverse=False)
         print 'We have calculated N-gram and the N-1-Gram.'
         print 'Then probability is calculated.'
         print 'We will now display the 25 sequences with the LOWEST probability.'
         for i in range(0, 25):
             #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
-            if i < len(self.probDict):
-                if self.probDict[i][0] != '':
-                    print self.probDict[i]
+            if i < len(probList):
+                if probList[i][0] != '':
+                    print probList[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 25 list.'
                 break
         print
-    def fileReaderStep1(self):
-        f = open(self.corpus, 'r')
-        for line in f:
-            for word in line.split():
-                self.corpusList.append(word)
-        f.close()
-
-    def fileReader(self, texttype):
-        if texttype == "paragraph" or texttype == "paragraph2":
-            self.changeText(texttype)
-
-        elif texttype == "lines":
-            f = open(self.cp, 'r')
-            for line in f:
-               lst = line.split()
-               if(len(lst) == self.n):
-                    if line.strip():
-                        for x in range(1, self.n):
-                            self.probList.append(["<s>"])
-                            self.probList.append(lst)
-                            for x in range(1, self.n):
-                                self.probList.append(["</s>"])
-                            self.probList.append(" ")
-            f.close()
-            self.probList = [item for sublist in self.probList for item in sublist]
-
-    def changeText(self, texttype):
-        tmp = []
-        if texttype == "paragraph":
-            n = self.n
-        elif texttype == "paragraph2":
-            n = self.n-1
-
-        for x in range(1, n):
-            tmp.append(["<s>"])
-        f = open(self.corpus, 'r')
-        for line in f:
-            if not line.strip():
-                for x in range(1, n):
-                    tmp.append(["</s>"])
-                for x in range(1, n):
-                    tmp.append(["<s>"])
-            else:
-                tmp.append(line.split())
-        for x in range(1, n):
-            tmp.append(["</s>"])
-        tmp = [item for sublist in tmp for item in sublist]
-        if texttype == "paragraph":
-            self.corpusList = tmp
-        if texttype == "paragraph2":
-            self.corpusList2 = tmp
