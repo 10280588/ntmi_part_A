@@ -53,7 +53,7 @@ class Main():
             self.printResult22()
             #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.3':
-            self.printer23()
+            #self.printer23()
             self.fileReader("paragraph")
             self.fileReader("paragraph2")
             ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)

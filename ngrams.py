@@ -25,10 +25,11 @@ class Ngrams():
 			sequence = self.corpusList[i];
 			for j in range(1, self.n):
 				sequence = sequence + " " + self.corpusList[i+j]
-			if sequence in self.tmp and not "</s> <s>" in sequence and not "<s> </s>" in sequence:
+			if (sequence in self.tmp):
 				self.tmp.update({sequence:(self.tmp[sequence]+1)})
 			else:
-				self.tmp.update({sequence:1})
+				if not "</s> <s>" in sequence and not "<s> </s>" in sequence:
+					self.tmp.update({sequence:1})
 		
 	# Look for most frequent occurences, and safe them.
 	def mostFrequent(self):
