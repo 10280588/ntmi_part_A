@@ -38,6 +38,7 @@ class Main():
             gramInstance = ngrams.Ngrams()
             # create nGram
             createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
+            mostFreq = gramInstance.mostFrequent(createdNgram)
             sumOfFreq = gramInstance.sumOfFrequencies(mostFreq)
             # Print all results, which are stored in the variables
             self.printResult1(mostFreq,sumOfFreq)
