@@ -56,11 +56,8 @@ class Main():
             reader = filereader.Reader()
             #Actually read the file
             corpusList = reader.fileReaderStep1(self.corpus)
-            print corpusList
             corpusList2 = reader.fileReader(self.corpus, self.n)
-            print corpusList2
             corpusList3 = reader.fileReader(self.corpus, self.n-1)
-            print corpusList3
             gramInstance = ngrams.Ngrams()
             createdNgram = gramInstance.calculateNGram(corpusList2, self.n, self.m)
             createdNgramMin1 = gramInstance.calculateNGram(corpusList2, self.n-1, self.m)

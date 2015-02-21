@@ -12,7 +12,6 @@ class Reader():
 
     def fileReader(self, corpus, n):
         #if texttype == "paragraph" or texttype == "paragraph2":
-        print n
         test = self.changeText(corpus, n)
 
         #elif texttype == "lines":

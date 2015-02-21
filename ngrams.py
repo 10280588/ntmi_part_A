@@ -3,9 +3,6 @@
 # Assignment: NTMI step 1
 #
 class Ngrams():
-	#make variables and call relevant methods
-	def __init__(self):
-		print 'Instance of Ngram class was created'
 	# The real calculation of occurences is done in this method
 	def calculateNGram(self, corpus, n, m):
 		print 'Calculating N-Gram with n = ' + str(n)
@@ -23,7 +20,6 @@ class Ngrams():
 
 	# Look for most frequent occurences, and safe them.
 	def mostFrequent(self, ngrams):
-		print 'pver '
 		sorted_nGrams = sorted(ngrams.items(), key=lambda nGram: nGram[1], reverse=True)
 		return sorted_nGrams
 
