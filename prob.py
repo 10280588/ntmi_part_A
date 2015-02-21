@@ -13,9 +13,7 @@ class Prob():
     # Calculates the probability of an N-gram given an (N-1)-Gram of a file. Uses only sentences of length n (starts/stops not included)
     def calculateProb(self, ngram, ngramMin1, lineList, n):
 
-
         probDict = {}
-
 
         #f = open(self.probfile, 'r')
         for line in lineList:
@@ -45,6 +43,7 @@ class Prob():
                     probDict.update({(sequence):odds})
         return probDict
     # Calculates the probability of a sentence by multiplying the probability of sequences of N-grams
+
     def calculateProbabilityOfString(self, line):
         odds = 1
         line = line[:len(line)-1]

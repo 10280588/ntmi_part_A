@@ -85,7 +85,6 @@ class Main():
             gramInstance = ngrams.Ngrams()
             createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
 
-
             #TODO: Add correct ngram to be smoothed
             smoothInstance = smooth.Smooth()
             NgramSmoothed = smoothInstance.add1(createdNgram)
