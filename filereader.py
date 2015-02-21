@@ -12,31 +12,7 @@ class Reader():
 
     def fileReader(self, corpus, n):
         #if texttype == "paragraph" or texttype == "paragraph2":
-        test = self.changeText(corpus, n)
-
-        #elif texttype == "lines":
-        #    f = open(corpus, 'r')
-        #    for line in f:
-        #       lst = line.split()
-        #       if(len(lst) == n):
-        #            if line.strip():
-        #                for x in range(1, n):
-        #                    self.probList.append(["<s>"])
-        #                    self.probList.append(lst)
-        #                    for x in range(1, n):
-        #                        self.probList.append(["</s>"])
-        #                    self.probList.append(" ")
-        #    f.close()
-        #    self.probList = [item for sublist in self.probList for item in sublist]
-
-        return test
-    def changeText(self, corpus, n):
         corpusList = []
-        print n
-        #if texttype == "paragraph":
-        #    n = self.n
-        #elif texttype == "paragraph2":
-        #    n = self.n-1
 
         for x in range(1, n):
             corpusList.append(["<s>"])
@@ -54,6 +30,31 @@ class Reader():
         corpusList = [item for sublist in corpusList for item in sublist]
 
         return corpusList
+
+        #elif texttype == "lines":
+        #    f = open(corpus, 'r')
+        #    for line in f:
+        #       lst = line.split()
+        #       if(len(lst) == n):
+        #            if line.strip():
+        #                for x in range(1, n):
+        #                    self.probList.append(["<s>"])
+        #                    self.probList.append(lst)
+        #                    for x in range(1, n):
+        #                        self.probList.append(["</s>"])
+        #                    self.probList.append(" ")
+        #    f.close()
+        #    self.probList = [item for sublist in self.probList for item in sublist]
+
+        return corpusList
+    def changeText(self, corpus, n):
+        corpusList = []
+        #if texttype == "paragraph":
+        #    n = self.n
+        #elif texttype == "paragraph2":
+        #    n = self.n-1
+
+
         #
         #if texttype == "paragraph":
         #    self.corpusList = tmp

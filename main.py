@@ -7,6 +7,7 @@ import sys
 import ngrams
 import prob
 import perm
+import smooth
 import filereader
 
 
@@ -23,12 +24,6 @@ class Main():
         self.sp = None
         self.perm = False
         self.case = ''
-        self.corpusList2 = []
-        self.probList = []
-        self.probDict = {}
-        self.tmp = []
-        self.sorted_nGrams = {}
-        self.sorted_nGrams2 = {}
 
         self.argumentReader()
         self.caseOptions()
@@ -55,40 +50,55 @@ class Main():
             #Create an instance so we can read the fileReader
             reader = filereader.Reader()
             #Actually read the file
-            corpusList = reader.fileReaderStep1(self.corpus)
-            corpusList2 = reader.fileReader(self.corpus, self.n)
-            corpusList3 = reader.fileReader(self.corpus, self.n-1)
+            corpusList = reader.fileReader(self.corpus, self.n)
             gramInstance = ngrams.Ngrams()
-            createdNgram = gramInstance.calculateNGram(corpusList2, self.n, self.m)
-            createdNgramMin1 = gramInstance.calculateNGram(corpusList2, self.n-1, self.m)
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1, self.m)
             mostFreq = gramInstance.mostFrequent(createdNgram)
             mostFreqMin1 = gramInstance.mostFrequent(createdNgramMin1)
             self.printResult21(mostFreq, mostFreqMin1)
             #TODO: DONE!
         elif self.case == '2.2':
             self.printer22()
-            self.fileReader("paragraph")
-            self.fileReader("paragraph2")
-            ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
-            ngrams.Ngrams(self.corpusList2, self.n-1, self.m, self.sorted_nGrams2)
-            prob.Prob(self.case, self.cp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
+            reader = filereader.Reader()
+            corpusList = reader.fileReader(self.corpus, self.n)
+            corpusList3 = reader.fileReader(self.corpus, self.n-1)
+            corpusListCPFile1 = reader.fileReader(self.cp, self.n)
+            corpusListCPFile2 = reader.fileReader(self.cp, self.n-1)
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusList2, self.n, self.m)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList2, self.n-1, self.m)
+            probInstance = prob.Prob()
+            probInstance.calculateProb(createdNgram, createdNgramMin1, self.n)
             self.printResult22()
             #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.3':
             #self.printer23()
-            self.fileReader("paragraph")
-            self.fileReader("paragraph2")
             ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
             ngrams.Ngrams(self.corpusList2, self.n-1, self.m, self.sorted_nGrams2)
             prob.Prob(self.case, self.sp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
         elif self.case == '2.4':
             self.printer24()
             perm.Permutation(self.corpus)
-        elif self.case == '3':
-            self.fileReader("paragraph")
-            ngrams.Ngrams(self.corpusList, 2, self.m, self.sorted_nGrams)
-            self.sorted_nGrams = {key: value+1 for (key, value) in self.sorted_nGrams.iteritems()}
+        elif self.case == '3add1':
+            #TODO Add nice print statements
+            print '3add1'
+            reader = filereader.Reader()
+            corpusList = reader.fileReader(self.corpus, self.n)
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
+
+
+            #TODO: Add correct ngram to be smoothed
+            smoothInstance = smooth.Smooth()
+            NgramSmoothed = smoothInstance.add1(createdNgram)
+            print NgramSmoothed
             #print self.sorted_nGrams
+        elif self.case == '3gt':
+            print 'Todo 3GT'
+        elif self.case == '3no':
+            print 'Todo 3 no'
+
 
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
@@ -138,9 +148,15 @@ class Main():
         elif self.perm == True:
             print 'Do step 2.4'
             self.case = '2.4'
-        elif self.smoothing == 'no' or self.smoothing == 'add1' or self.smoothing == 'gt':
-            self.case = '3'
-            print 'Do step 3'
+        elif self.smoothing == 'no':
+            self.case = '3no'
+            print 'Do step 3, with no smoothing'
+        elif self.smoothing == 'add1':
+            self.case = '3add1'
+            print 'Do step 3, with add1 smoothing'
+        elif self.smoothing == 'gt':
+            self.case = '3gt'
+            print 'Do step 3, with Good-Turing smoothing'
         elif self.n > 0:
             print 'Do step 2.1'
             self.case = '2.1'
