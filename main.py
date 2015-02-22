@@ -62,8 +62,8 @@ class Main():
             reader = filereader.Reader()
             corpusList = reader.fileReader(self.corpus, self.n)
             lineList = reader.lineReader(self.cp, self.n)
-            #print lineList
-            #create the two ngrams
+            # Print lineList
+            # Create the two ngrams
             gramInstance = ngrams.Ngrams()
             createdNgram = gramInstance.calculateNGram(corpusList, self.n)
             createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1)
@@ -72,27 +72,25 @@ class Main():
             probList = probInstance.calculateProb(createdNgram, createdNgramMin1, lineList, self.n)
             self.printResult22(probList)
         elif self.case == '2.3':
-<<<<<<< HEAD
-            print 'hoi'
-            #self.printer23()
-           # ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
-        #    ngrams.Ngrams(self.corpusList2, self.n-1, self.m, self.sorted_nGrams2)
-        #    prob.Prob(self.case, self.sp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
-=======
             self.printer23()
             reader = filereader.Reader()
             corpusList = reader.fileReader(self.corpus, self.n)
             lineList = reader.lineReader(self.sp, self.n)
-            #print lineList
-            #create the two ngrams
+            # Create the two ngrams
             gramInstance = ngrams.Ngrams()
             createdNgram = gramInstance.calculateNGram(corpusList, self.n)
             createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1)
             # Calculate the probability
             probInstance = prob.Prob()
             probList = probInstance.sequenceProb(createdNgram, createdNgramMin1, lineList, self.n)
-            self.printResult22(probList)
->>>>>>> 23c04ae247801cf3c91a3e94a7d2e4e1470bc088
+            #self.printResult22(probList)
+            count = 0
+            print probList
+            for key, value in probList.iteritems():
+                if value == 0:
+                    count = count + 1
+            print 'Percentage of sentences being assigned zero = ' + str(count/len(probList))
+
         elif self.case == '2.4':
             self.printer24()
             # create a list
@@ -138,6 +136,11 @@ class Main():
                     entry = ' '.join(entryList[i+1:i+self.n+1])
                     odds = odds*probInstance.calculateProbabilityUsingAdd1(ngramAdd1, ngramMin1Add1, entry)
                 print item + '-> odds = ' + str(odds)
+            count = 0
+            for key, value in probList.iteritems():
+                if value == 0:
+                    count = count + 1
+            print 'Percentage of sentences being assigned zero = ' + str(count/len(probList))
         elif self.case == '3gt':
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
             print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
@@ -146,7 +149,7 @@ class Main():
         elif self.case == '3no':
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
             print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
-            print 'Todo 3 no' # same as 2.3 so fix pls
+            print 'Todo 3 no' # same as 2.3
 
 
     #Takes care of provided arguments, if none given use default!

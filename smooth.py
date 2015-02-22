@@ -5,7 +5,7 @@ class Smooth():
         smoothedNgram = {key: value+1 for (key, value) in ngram.iteritems()}
         return smoothedNgram
         
-    def GT(self, ngram):
+    def GT(self, ngram, corpusLength):
         N = [0,0,0,0,0,0]
         
         for key, value in ngram.iteritems():
@@ -22,15 +22,16 @@ class Smooth():
             if value == 6:
                 N[6] == N[6] + 1
         for key, value in ngram.iteritems():             # for every entry in the ngram
-            newValue = self.GTSmoothing(ngram, value, N) # return the new value from GT 
+            newValue = self.GTSmoothing(ngram, value, N, corpusLength) # return the new value using GT formula 
             ngram.update({key:newValue})                 # and update entry to new value
+            return ngram
             
         #need for prob: len(yourdict.keys()) or len(yourdict) for vocabulary count
         #N = number words total (or ngrams)
 
-    def GTSmoothing(self, ngram, value, N):
+    def GTSmoothing(self, ngram, value, N, corpusLength):
         if value == 0:
-            return N[1]/len(ngram)
+            return N[1]/(corpusLength)
         else:
             if value <= 5:
                 newValue = ((value + 1) * N[value+1])/N[value]
