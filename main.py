@@ -127,6 +127,7 @@ class Main():
             smoothInstance = smooth.Smooth()
             ngramAdd1 = smoothInstance.add1(createdNgram)
             ngramMin1Add1 = smoothInstance.add1(createdNgramMin1)
+            probDictSentence = {}
             probInstance = prob.Prob()
             for item in corpusListTest:
                 odds = 1
@@ -134,9 +135,10 @@ class Main():
                 for i in range(0, len(entryList)-self.n):
                     entry = ' '.join(entryList[i+1:i+self.n+1])
                     odds = odds*probInstance.calculateProbabilityUsingAdd1(ngramAdd1, ngramMin1Add1, entry)
+                probDictSentence.update({item:odds})
                 print item + '-> odds = ' + str(odds)
             count = 0
-            for key, value in probList.iteritems():
+            for key, value in probDictSentence.iteritems():
                 if value == 0:
                     count = count + 1
             print 'Percentage of sentences being assigned zero = ' + str(count/len(probList))
