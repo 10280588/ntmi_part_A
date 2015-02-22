@@ -116,13 +116,14 @@ class Main():
             #calculate probability
             probInstance = prob.Prob()
             probList = probInstance.calculateProb(createdNgram, createdNgramMin1, corpusListTest, self.n)
-            #smooth it
             smoothInstance = smooth.Smooth()
             NgramSmoothed = smoothInstance.add1(probList)
+
             print NgramSmoothed
             #print NgramSmoothed
             #print self.sorted_nGrams
         elif self.case == '3gt':
+            corpusLength = len(self.corpus)
             print 'Todo 3GT'
             #read files
             reader = filereader.Reader()
