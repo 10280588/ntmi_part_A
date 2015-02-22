@@ -1,5 +1,7 @@
 from __future__ import division
 import sys
+import smooth
+
 class Prob():
     #    if self.case == '2.2':
     #        self.calculateProb()
@@ -53,3 +55,25 @@ class Prob():
                 if entryAmount2 != None:
                     odds = odds * (entryAmount/entryAmount2)
                     return odds
+                    
+    # This is only for one ngram-combination, can be used for whole sentences
+    def calculateProbabilityUsingAdd1(self, ngram, ngramMin1, entry): 
+        entryAmount = ngram.get(entry)
+        entryList = entry.split()
+        entryListWithoutLastWord = entryList[:-1]
+        entryWithoutLastWord = ' '.join(entryListWithoutLastWord, None)
+        if entryWithoutLastWord != None:
+            entryAmount2 = ngramMin1(entryWithoutLastWord)
+            if entryAmount2 != None:
+                odds = entryAmount/(entryAmount2 + len(ngram))
+                return odds
+            else:
+                print 'no entryAmount2'
+            #smoothedNgram = smooth.add1(ngram)
+        else:
+            print 'Well this shouldn\'t go wrong'
+        return 0
+        
+    # Exercise doesn't clearly tell how to do this
+    def calculateProbabilityUsingGT(self, ngram, ngramMin1, corpusLength):
+        #smoothedNgram = smooth.GT(ngram, corpusLength)

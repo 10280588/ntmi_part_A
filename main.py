@@ -82,15 +82,16 @@ class Main():
             print '3add1'
             reader = filereader.Reader()
             corpusList = reader.fileReader(self.corpus, self.n)
-            gramInstance = ngrams.Ngrams()
-            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
+            #gramInstance = ngrams.Ngrams() #is this necessary?
+            createdNgram = ngrams.calculateNGram(corpusList, self.n, self.m)
 
             #TODO: Add correct ngram to be smoothed
-            smoothInstance = smooth.Smooth()
-            NgramSmoothed = smoothInstance.add1(createdNgram)
+            #smoothInstance = smooth.Smooth()
+            NgramSmoothed = smooth.add1(createdNgram)
             print NgramSmoothed
             #print self.sorted_nGrams
         elif self.case == '3gt':
+            corpusLength = len(self.corpus)
             print 'Todo 3GT'
         elif self.case == '3no':
             print 'Todo 3 no'
