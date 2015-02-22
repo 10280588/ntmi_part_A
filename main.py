@@ -23,6 +23,8 @@ class Main():
         self.sp = None
         self.perm = False
         self.case = ''
+        self.train = None
+        self.test = None
 
         self.argumentReader()
         self.caseOptions()
@@ -33,11 +35,10 @@ class Main():
             reader = filereader.Reader()
             #Actually read the file
             corpusList = reader.fileReaderStep1(self.corpus)
-            print corpusList
             # create instance of Ngram class
             gramInstance = ngrams.Ngrams()
             # create nGram
-            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n)
             mostFreq = gramInstance.mostFrequent(createdNgram)
             sumOfFreq = gramInstance.sumOfFrequencies(mostFreq)
             # Print all results, which are stored in the variables
@@ -49,12 +50,11 @@ class Main():
             #Actually read the file
             corpusList = reader.fileReader(self.corpus, self.n)
             gramInstance = ngrams.Ngrams()
-            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
-            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1, self.m)
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1)
             mostFreq = gramInstance.mostFrequent(createdNgram)
             mostFreqMin1 = gramInstance.mostFrequent(createdNgramMin1)
             self.printResult21(mostFreq, mostFreqMin1)
-            #TODO: DONE!
         elif self.case == '2.2':
             self.printer22()
             reader = filereader.Reader()
@@ -62,13 +62,12 @@ class Main():
             lineList = reader.lineReader(self.cp, self.n)
             #create the two ngrams
             gramInstance = ngrams.Ngrams()
-            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
-            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1, self.m)
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1)
             # Calculate the probability
             probInstance = prob.Prob()
             probList = probInstance.calculateProb(createdNgram, createdNgramMin1, lineList, self.n)
             self.printResult22(probList)
-            #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.3':
             #self.printer23()
             ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
@@ -76,19 +75,44 @@ class Main():
             prob.Prob(self.case, self.sp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
         elif self.case == '2.4':
             self.printer24()
-            perm.Permutation(self.corpus)
+            # create a list
+            reader = filereader.Reader()
+            corpusList = reader.fileReaderStep1(self.corpus)
+            print corpusList
+            permInstance = perm.Permutation()
+            permutations = permInstance.allPermutations(corpusList)
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(permutations, 2)
+            createdNgramMin1 = gramInstance.calculateNGram(permutations, 1)
+            # Calculate the probability
+            probInstance = prob.Prob()
+            #probList = probInstance.calculateProb(createdNgram, createdNgramMin1, permutationS, self.n)
+            mostFreq = gramInstance.mostFrequent(createdNgram)
+            mostFreqMin1 = gramInstance.mostFrequent(createdNgramMin1)
+            self.printResult21(mostFreq, mostFreqMin1)
+            print createdNgram
+            print createdNgramMin1
         elif self.case == '3add1':
             #TODO Add nice print statements
             print '3add1'
             reader = filereader.Reader()
-            corpusList = reader.fileReader(self.corpus, self.n)
-            #gramInstance = ngrams.Ngrams() #is this necessary?
-            createdNgram = ngrams.calculateNGram(corpusList, self.n, self.m)
-
+            corpusListTrain = reader.fileReader(self.train, self.n)
+            corpusListTest = reader.lineReader(self.test, self.n)
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusListTrain, self.n)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusListTrain, self.n-1)
+            probInstance = prob.Prob()
+            probList = probInstance.calculateProb(createdNgram, createdNgramMin1, corpusListTest, self.n)
+            print 'noway'
+            print probList
             #TODO: Add correct ngram to be smoothed
+                        #TODO: Add correct ngram to be smoothed
             #smoothInstance = smooth.Smooth()
-            NgramSmoothed = smooth.add1(createdNgram)
+            smoothInstance = smooth.Smooth()
+            NgramSmoothed = smoothInstance.add1(probList)
+
             print NgramSmoothed
+            #print NgramSmoothed
             #print self.sorted_nGrams
         elif self.case == '3gt':
             corpusLength = len(self.corpus)
@@ -102,8 +126,7 @@ class Main():
         # Make a nice way to handle command line arguments
         parser = argparse.ArgumentParser()
         # -corpus argumentgit
-        parser.add_argument('-corpus', required=True,
-        help='Provide a text corpus file in the .txt format to perform an N-gram calculation.')
+        parser.add_argument('-corpus', help='Provide a text corpus file in the .txt format to perform an N-gram calculation.')
         # -n argument
         parser.add_argument('-n',  type=int,
         help='Provide a number (integer) to calculate N-grams with word sequences of length n.')
@@ -119,6 +142,8 @@ class Main():
         # -scored-permutations argument
         parser.add_argument('-scored-permutations', action='store_true')
         parser.add_argument('-smoothing', help='Provide a smoothing method to get rid of zero entries')
+        parser.add_argument('-train-corpus', help='Provide a smoothing method to get rid of zero entries')
+        parser.add_argument('-test-corpus', help='Provide a smoothing method to get rid of zero entries')
 
         args = parser.parse_args()
         self.corpus = args.corpus
@@ -128,6 +153,8 @@ class Main():
         self.sp = args.sequence_prob_file
         self.perm = args.scored_permutations
         self.smoothing = args.smoothing
+        self.test = args.test_corpus
+        self.train = args.train_corpus
 
     #Decides what we are going to do, given the provided arguments.
     def caseOptions(self):
@@ -217,7 +244,7 @@ class Main():
         print ''
         print 'The top 10 list of most occuring sequences ([word], [frequency]) for the provided N:'
         #Print the m most frequent ngrams.
-        for i in range(0, 10):
+        for i in range(0, 25):
             #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
             if i < len(mostFreq):
                 if mostFreq[i][0] != '':

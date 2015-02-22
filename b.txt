@@ -1,4 +1,1 @@
-I, Do, Not, Know
-ok
-ok go
-go
+I do not know
