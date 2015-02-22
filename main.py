@@ -33,7 +33,6 @@ class Main():
             reader = filereader.Reader()
             #Actually read the file
             corpusList = reader.fileReaderStep1(self.corpus)
-            print corpusList
             # create instance of Ngram class
             gramInstance = ngrams.Ngrams()
             # create nGram

@@ -16,26 +16,37 @@ class Prob():
         #f = open(self.probfile, 'r')
         for line in lineList:
             strList = line.split()
-            for i in range(0, n):
+            if n < 3:
+                loop = n
+            else:
+                loop = n + 2
+            for i in range(0, loop):
                 #Make the sequence we want to test
+                print 'begin of sbuilder'
                 sequence = strList[i];
+                #print strList
                 for j in range(1,n):
                     sequence = sequence + " " + strList[i+j]
-                    probDict.update({sequence:0})
+                print sequence
+                probDict.update({sequence:0})
                 #Now make the sequence which is one item shorter
                 sequenceMin1 = strList[i];
                 for j in range(1,n-1):
-                    sequenceMin1 = sequenceMin1 + " " + sequenceMin1[i+j]
+                    sequenceMin1 = sequenceMin1 + " " + strList[i+j]
 
-            #If the test sequence exists in our training Ngram get its occurences
-            occurenceNgram = ngram.get((sequence), None)
-            if occurenceNgram != None:
-                #If the test sequence exists in our training Ngram then also get Ngram-1 occurences
-                occurenceNgramMin1 = ngramMin1.get((sequenceMin1), None)
-                if occurenceNgramMin1 != None:
-                    # If the sequence exits in both the Ngram and Ngram -1 calculate the odds
-                    odds = occurenceNgram/occurenceNgramMin1
-                    probDict.update({(sequence):odds})
+                #If the test sequence exists in our training Ngram get its occurences
+                print 'testeds'
+                print sequence
+                occurenceNgram = ngram.get((sequence), None)
+                print occurenceNgram
+                if occurenceNgram != None:
+                    #If the test sequence exists in our training Ngram then also get Ngram-1 occurences
+                    occurenceNgramMin1 = ngramMin1.get((sequenceMin1), None)
+                    print occurenceNgramMin1
+                    if occurenceNgramMin1 != None:
+                        # If the sequence exits in both the Ngram and Ngram -1 calculate the odds
+                        odds = occurenceNgram/occurenceNgramMin1
+                        probDict.update({(sequence):odds})
         return probDict
     # Calculates the probability of a sentence by multiplying the probability of sequences of N-grams
 

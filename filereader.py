@@ -11,7 +11,6 @@ class Reader():
         return corpusList
 
     def fileReader(self, corpus, n):
-        #if texttype == "paragraph" or texttype == "paragraph2":
         corpusList = []
 
         for x in range(1, n):
