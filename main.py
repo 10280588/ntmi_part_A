@@ -178,18 +178,23 @@ class Main():
         elif self.case == '3no':
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
             print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
+            self.printer23()
             reader = filereader.Reader()
-            corpusList = reader.fileReader(self.corpus, self.n)
-            lineList = reader.lineReader(self.corpus, self.n)
-            #print lineList
-            #create the two ngrams
+            corpusList = reader.fileReader(self.train, self.n)
+            lineList = reader.lineReader(self.test, self.n)
+            # Create the two ngrams
             gramInstance = ngrams.Ngrams()
             createdNgram = gramInstance.calculateNGram(corpusList, self.n)
             createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1)
             # Calculate the probability
             probInstance = prob.Prob()
             probList = probInstance.sequenceProb(createdNgram, createdNgramMin1, lineList, self.n)
+            count = 0
+            for key, value in probList.iteritems():
+                if value == 0:
+                    count = count + 1
             self.printResult22(probList)
+            print 'Percentage of sentences being assigned zero = ' + str(count/len(probList))
 
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
