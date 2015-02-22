@@ -72,13 +72,6 @@ class Main():
             probList = probInstance.calculateProb(createdNgram, createdNgramMin1, lineList, self.n)
             self.printResult22(probList)
         elif self.case == '2.3':
-<<<<<<< HEAD
-            print 'hoi'
-            #self.printer23()
-           # ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
-        #    ngrams.Ngrams(self.corpusList2, self.n-1, self.m, self.sorted_nGrams2)
-        #    prob.Prob(self.case, self.sp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
-=======
             self.printer23()
             reader = filereader.Reader()
             corpusList = reader.fileReader(self.corpus, self.n)
@@ -92,7 +85,6 @@ class Main():
             probInstance = prob.Prob()
             probList = probInstance.sequenceProb(createdNgram, createdNgramMin1, lineList, self.n)
             self.printResult22(probList)
->>>>>>> 23c04ae247801cf3c91a3e94a7d2e4e1470bc088
         elif self.case == '2.4':
             self.printer24()
             # create a list
