@@ -89,6 +89,7 @@ class Main():
             for key, value in probList.iteritems():
                 if value == 0:
                     count = count + 1
+            self.printResult22(probList)
             print 'Percentage of sentences being assigned zero = ' + str(count/len(probList))
 
         elif self.case == '2.4':
@@ -96,20 +97,18 @@ class Main():
             # create a list
             reader = filereader.Reader()
             corpusList = reader.fileReaderStep1(self.corpus)
-            print corpusList
+            corpusListNgram = reader.fileReader('austen.txt', 2)
+            corpusListNgramMin1 = reader.fileReader('austen.txt', 1)
             permInstance = perm.Permutation()
             permutations = permInstance.allPermutations(corpusList)
             gramInstance = ngrams.Ngrams()
-            createdNgram = gramInstance.calculateNGram(permutations, 2)
-            createdNgramMin1 = gramInstance.calculateNGram(permutations, 1)
+            createdNgram = gramInstance.calculateNGram(corpusListNgram, 2)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusListNgramMin1, 1)
             # Calculate the probability
             probInstance = prob.Prob()
-            #probList = probInstance.calculateProb(createdNgram, createdNgramMin1, permutationS, self.n)
-            mostFreq = gramInstance.mostFrequent(createdNgram)
-            mostFreqMin1 = gramInstance.mostFrequent(createdNgramMin1)
-            self.printResult21(mostFreq, mostFreqMin1)
-            print createdNgram
-            print createdNgramMin1
+            probList = probInstance.permProb(createdNgram, createdNgramMin1, permutations, 2)
+            mostFreq = gramInstance.mostFrequent(probList)
+            self.printResult24(mostFreq)
         elif self.case == '3add1':
             print '3add1'
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
@@ -149,8 +148,18 @@ class Main():
         elif self.case == '3no':
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
             print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
-            print 'Todo 3 no' # same as 2.3
-
+            reader = filereader.Reader()
+            corpusList = reader.fileReader(self.corpus, self.n)
+            lineList = reader.lineReader(self.corpus, self.n)
+            #print lineList
+            #create the two ngrams
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1)
+            # Calculate the probability
+            probInstance = prob.Prob()
+            probList = probInstance.sequenceProb(createdNgram, createdNgramMin1, lineList, self.n)
+            self.printResult22(probList)
 
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
@@ -247,8 +256,8 @@ class Main():
     def printer23(self):
         print 'We will calculate the change of the sequence based on multiplication of the probability of every word.'
     def printer24(self):
-        print 'step 2.4 is not fully implemented yet'
-        print 'The program will now calculate permutations for you'
+        print 'We will calculate permutations and then reference the permutations against austen.txt'
+        print 'The program will now calculate permutations for you.'
         print 'The used corpusfile is: ' + self.corpus
         print
 
@@ -311,5 +320,18 @@ class Main():
                     print probList[i]
             else:
                 print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 25 list.'
+                break
+        print
+    def printResult24(self, mostFreq):
+        print 'We have calculated N-gram and the N-1-Gram.'
+        print 'Then probability is calculated.'
+        print 'We will now display the 10 sequences with the highest probability.'
+        for i in range(0, 10):
+            #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
+            if i < len(mostFreq):
+                if mostFreq[i][0] != '':
+                    print mostFreq[i]
+            else:
+                print 'There were only ' + str(i) + ' combinations, so they all fitted in your top 10 list.'
                 break
         print
