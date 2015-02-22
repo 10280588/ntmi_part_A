@@ -136,7 +136,17 @@ class Main():
         elif self.case == '3no':
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
             print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
-            print 'Todo 3 no' # same as 2.3 so fix pls
+            #Create an instance so we can read the fileReader
+            reader = filereader.Reader()
+            #Actually read the file
+            corpusList = reader.fileReader(self.corpus, self.n)
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1)
+            mostFreq = gramInstance.mostFrequent(createdNgram)
+            mostFreqMin1 = gramInstance.mostFrequent(createdNgramMin1)
+            self.printResult21(mostFreq, mostFreqMin1)
+
 
 
     #Takes care of provided arguments, if none given use default!
