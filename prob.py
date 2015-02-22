@@ -15,7 +15,6 @@ class Prob():
     # Calculates the probability of an N-gram given an (N-1)-Gram of a file. Uses only sentences of length n (starts/stops not included)
     def calculateProb(self, ngram, ngramMin1, lineList, n):
         probDict = {}
-        print ngram
 
         #f = open(self.probfile, 'r')
         for line in lineList:
@@ -27,15 +26,16 @@ class Prob():
             for i in range(0, loop):
                 #Make the sequence we want to test
                 sequence = strList[i];
-                #print strList
+                print strList
+
                 for j in range(1,n):
                     sequence = sequence + " " + strList[i+j]
+                    print sequence
                 probDict.update({sequence:0})
                 #Now make the sequence which is one item shorter
                 sequenceMin1 = strList[i];
                 for j in range(1,n-1):
                     sequenceMin1 = sequenceMin1 + " " + strList[i+j]
-                print sequence
                 #If the test sequence exists in our training Ngram get its occurences
                 occurenceNgram = ngram.get((sequence), None)
                 if occurenceNgram != None:
@@ -47,23 +47,34 @@ class Prob():
                         odds = occurenceNgram/occurenceNgramMin1
                         probDict.update({(sequence):odds})
         return probDict
-    # Calculates the probability of a sentence by multiplying the probability of sequences of N-grams
 
-    def calculateProbabilityOfString(self, line):
+    def sequenceProb(self, ngram, ngramMin1, lineList, n):
+        probDict = {}
         odds = 1
-        line = line[:len(line)-1]
-        strList = line.split()
-        lineWithStarts = ['<s>' for s in xrange(self.n-1)] + strList + ['</s>' for s in xrange(self.n-1)]
-        self.probDict.update({line:0})
 
-        for i in range(1, len(strList) + self.n):
-            entryAmount = self.sorted_nGrams.get(' '.join(lineWithStarts[i-1:i+self.n-1]), None)
-            if entryAmount != None:
-                entryAmount2 = self.sorted_nGrams2.get(' '.join(lineWithStarts[i-1:i+self.n-2]), None)
-                if entryAmount2 != None:
-                    odds = odds * (entryAmount/entryAmount2)
-                    return odds
-                    
+        for line in lineList:
+            strList = line.split()
+            if n < 3:
+                loop = n + 1
+            else:
+                loop = n + 2
+            for i in range(0, loop):
+                #Make the sequence we want to test
+                sequence = strList[i];
+                probDict.update({line:0})
+                #Now make the sequence which is one item shorter
+                sequenceMin1 = strList[i];
+                for i in range(1, len(strList)):
+                    iteminNgram = ' '.join(strList[i-1:i+n-1])
+                    iteminNgramMin1 = ' '.join(strList[i-1:i+n-2])
+                    entryAmount = ngram.get(iteminNgram, None)
+                    if entryAmount != None:
+                        entryAmount2 = ngramMin1.get(iteminNgramMin1, None)
+                        if entryAmount2 != None:
+                            odds = odds * (entryAmount/entryAmount2)
+                        probDict.update({line:odds})
+        return probDict
+
     # This is only for one ngram-combination, can be used for whole sentences
     def calculateProbabilityUsingAdd1(self, ngram, ngramMin1, entry): 
         entryAmount = ngram.get(entry, None)
@@ -77,7 +88,7 @@ class Prob():
             entryAmount2 = 1
         odds = entryAmount/(entryAmount2 + len(ngram))
         return odds
-        
+
     # Exercise doesn't clearly tell how to do this
     #def calculateProbabilityUsingGT(self, ngram, ngramMin1, corpusLength):
         #smoothedNgram = smooth.GT(ngram, corpusLength)

@@ -62,6 +62,7 @@ class Main():
             reader = filereader.Reader()
             corpusList = reader.fileReader(self.corpus, self.n)
             lineList = reader.lineReader(self.cp, self.n)
+            #print lineList
             #create the two ngrams
             gramInstance = ngrams.Ngrams()
             createdNgram = gramInstance.calculateNGram(corpusList, self.n)
@@ -71,11 +72,27 @@ class Main():
             probList = probInstance.calculateProb(createdNgram, createdNgramMin1, lineList, self.n)
             self.printResult22(probList)
         elif self.case == '2.3':
+<<<<<<< HEAD
             print 'hoi'
             #self.printer23()
            # ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
         #    ngrams.Ngrams(self.corpusList2, self.n-1, self.m, self.sorted_nGrams2)
         #    prob.Prob(self.case, self.sp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
+=======
+            self.printer23()
+            reader = filereader.Reader()
+            corpusList = reader.fileReader(self.corpus, self.n)
+            lineList = reader.lineReader(self.sp, self.n)
+            #print lineList
+            #create the two ngrams
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1)
+            # Calculate the probability
+            probInstance = prob.Prob()
+            probList = probInstance.sequenceProb(createdNgram, createdNgramMin1, lineList, self.n)
+            self.printResult22(probList)
+>>>>>>> 23c04ae247801cf3c91a3e94a7d2e4e1470bc088
         elif self.case == '2.4':
             self.printer24()
             # create a list
@@ -99,13 +116,17 @@ class Main():
             print '3add1'
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
             print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
+            #read files
             reader = filereader.Reader()
             corpusListTrain = reader.fileReader(self.train, self.n)
             corpusListTest = reader.lineReader(self.test, self.n)
+            #make ngrams
             gramInstance = ngrams.Ngrams()
             createdNgram = gramInstance.calculateNGram(corpusListTrain, self.n)
             createdNgramMin1 = gramInstance.calculateNGram(corpusListTrain, self.n-1)
-            createdNgramMin1
+            #calculate probability
+            probInstance = prob.Prob()
+            probList = probInstance.calculateProb(createdNgram, createdNgramMin1, corpusListTest, self.n)
             smoothInstance = smooth.Smooth()
             ngramAdd1 = smoothInstance.add1(createdNgram)
             ngramMin1Add1 = smoothInstance.add1(createdNgramMin1)
@@ -121,7 +142,7 @@ class Main():
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
             print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
             corpusLength = len(self.corpus)
-            
+
         elif self.case == '3no':
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
             print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
@@ -221,7 +242,7 @@ class Main():
     def printer22(self):
         print 'We will calculate the N-gram and the N-1-Gram, and then the probability.'
     def printer23(self):
-        print 'step 2.3 is not implemented yet'
+        print 'We will calculate the change of the sequence based on multiplication of the probability of every word.'
     def printer24(self):
         print 'step 2.4 is not fully implemented yet'
         print 'The program will now calculate permutations for you'
