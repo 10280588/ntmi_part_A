@@ -56,6 +56,7 @@ class Prob():
                         probDict.update({line:odds})
         return probDict
 
+# this method is  depricated, perms uses sequenceProb
     def permProb(self, ngram, ngramMin1, lineList, n):
         probDict = {}
 
