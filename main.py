@@ -23,6 +23,8 @@ class Main():
         self.sp = None
         self.perm = False
         self.case = ''
+        self.train = None
+        self.test = None
 
         self.argumentReader()
         self.caseOptions()
@@ -94,14 +96,20 @@ class Main():
             #TODO Add nice print statements
             print '3add1'
             reader = filereader.Reader()
-            corpusList = reader.fileReader(self.corpus, self.n)
+            corpusListTrain = reader.fileReader(self.train, self.n)
+            corpusListTest = reader.lineReader(self.test, self.n)
             gramInstance = ngrams.Ngrams()
-            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
-
+            createdNgram = gramInstance.calculateNGram(corpusListTrain, self.n)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusListTrain, self.n-1)
+            probInstance = prob.Prob()
+            probList = probInstance.calculateProb(createdNgram, createdNgramMin1, corpusListTest, self.n)
+            print 'noway'
+            print probList
             #TODO: Add correct ngram to be smoothed
             smoothInstance = smooth.Smooth()
-            NgramSmoothed = smoothInstance.add1(createdNgram)
+            NgramSmoothed = smoothInstance.add1(probList)
             print NgramSmoothed
+            #print NgramSmoothed
             #print self.sorted_nGrams
         elif self.case == '3gt':
             print 'Todo 3GT'
@@ -114,8 +122,7 @@ class Main():
         # Make a nice way to handle command line arguments
         parser = argparse.ArgumentParser()
         # -corpus argumentgit
-        parser.add_argument('-corpus', required=True,
-        help='Provide a text corpus file in the .txt format to perform an N-gram calculation.')
+        parser.add_argument('-corpus', help='Provide a text corpus file in the .txt format to perform an N-gram calculation.')
         # -n argument
         parser.add_argument('-n',  type=int,
         help='Provide a number (integer) to calculate N-grams with word sequences of length n.')
@@ -131,6 +138,8 @@ class Main():
         # -scored-permutations argument
         parser.add_argument('-scored-permutations', action='store_true')
         parser.add_argument('-smoothing', help='Provide a smoothing method to get rid of zero entries')
+        parser.add_argument('-train-corpus', help='Provide a smoothing method to get rid of zero entries')
+        parser.add_argument('-test-corpus', help='Provide a smoothing method to get rid of zero entries')
 
         args = parser.parse_args()
         self.corpus = args.corpus
@@ -140,6 +149,8 @@ class Main():
         self.sp = args.sequence_prob_file
         self.perm = args.scored_permutations
         self.smoothing = args.smoothing
+        self.test = args.test_corpus
+        self.train = args.train_corpus
 
     #Decides what we are going to do, given the provided arguments.
     def caseOptions(self):
