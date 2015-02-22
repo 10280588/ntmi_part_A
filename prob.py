@@ -66,22 +66,18 @@ class Prob():
                     
     # This is only for one ngram-combination, can be used for whole sentences
     def calculateProbabilityUsingAdd1(self, ngram, ngramMin1, entry): 
-        entryAmount = ngram.get(entry)
+        entryAmount = ngram.get(entry, None)
         entryList = entry.split()
         entryListWithoutLastWord = entryList[:-1]
-        entryWithoutLastWord = ' '.join(entryListWithoutLastWord, None)
-        if entryWithoutLastWord != None:
-            entryAmount2 = ngramMin1(entryWithoutLastWord)
-            if entryAmount2 != None:
-                odds = entryAmount/(entryAmount2 + len(ngram))
-                return odds
-            else:
-                print 'no entryAmount2'
-            #smoothedNgram = smooth.add1(ngram)
-        else:
-            print 'Well this shouldn\'t go wrong'
-        return 0
+        entryWithoutLastWord = ' '.join(entryListWithoutLastWord)
+        if entryAmount == None:
+            entryAmount = 1
+        entryAmount2 = ngramMin1.get(entryWithoutLastWord, None)
+        if entryAmount2 == None:
+            entryAmount2 = 1
+        odds = entryAmount/(entryAmount2 + len(ngram))
+        return odds
         
     # Exercise doesn't clearly tell how to do this
-    def calculateProbabilityUsingGT(self, ngram, ngramMin1, corpusLength):
+    #def calculateProbabilityUsingGT(self, ngram, ngramMin1, corpusLength):
         #smoothedNgram = smooth.GT(ngram, corpusLength)
