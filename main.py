@@ -2,6 +2,7 @@
 # Copyright: Menno van Leeuwen (10280588)
 # Assignment: NTMI step 1
 #
+from __future__ import division
 import argparse
 import sys
 import ngrams
@@ -9,6 +10,7 @@ import prob
 import perm
 import smooth
 import filereader
+
 
 # Class reads in arguments and then selects the correct case.
 # Besides this a lot of information is printed.
@@ -70,6 +72,13 @@ class Main():
             probList = probInstance.calculateProb(createdNgram, createdNgramMin1, lineList, self.n)
             self.printResult22(probList)
         elif self.case == '2.3':
+<<<<<<< HEAD
+            print 'hoi'
+            #self.printer23()
+           # ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
+        #    ngrams.Ngrams(self.corpusList2, self.n-1, self.m, self.sorted_nGrams2)
+        #    prob.Prob(self.case, self.sp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
+=======
             self.printer23()
             reader = filereader.Reader()
             corpusList = reader.fileReader(self.corpus, self.n)
@@ -83,6 +92,7 @@ class Main():
             probInstance = prob.Prob()
             probList = probInstance.sequenceProb(createdNgram, createdNgramMin1, lineList, self.n)
             self.printResult22(probList)
+>>>>>>> 23c04ae247801cf3c91a3e94a7d2e4e1470bc088
         elif self.case == '2.4':
             self.printer24()
             # create a list
@@ -101,8 +111,9 @@ class Main():
             mostFreq = gramInstance.mostFrequent(probList)
             self.printResult24(mostFreq)
         elif self.case == '3add1':
-            #TODO Add nice print statements
             print '3add1'
+            print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
+            print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
             #read files
             reader = filereader.Reader()
             corpusListTrain = reader.fileReader(self.train, self.n)
@@ -115,30 +126,25 @@ class Main():
             probInstance = prob.Prob()
             probList = probInstance.calculateProb(createdNgram, createdNgramMin1, corpusListTest, self.n)
             smoothInstance = smooth.Smooth()
-            NgramSmoothed = smoothInstance.add1(probList)
-
-            print NgramSmoothed
-            #print NgramSmoothed
-            #print self.sorted_nGrams
+            ngramAdd1 = smoothInstance.add1(createdNgram)
+            ngramMin1Add1 = smoothInstance.add1(createdNgramMin1)
+            probInstance = prob.Prob()
+            for item in corpusListTest:
+                odds = 1
+                entryList = item.split()
+                for i in range(0, len(entryList)-self.n):
+                    entry = ' '.join(entryList[i+1:i+self.n+1])
+                    odds = odds*probInstance.calculateProbabilityUsingAdd1(ngramAdd1, ngramMin1Add1, entry)
+                print item + '-> odds = ' + str(odds)
         elif self.case == '3gt':
+            print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
+            print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
             corpusLength = len(self.corpus)
-            print 'Todo 3GT'
-            #read files
-            reader = filereader.Reader()
-            corpusListTrain = reader.fileReader(self.train, self.n)
-            corpusListTest = reader.lineReader(self.test, self.n)
-            #make ngrams
-            gramInstance = ngrams.Ngrams()
-            createdNgram = gramInstance.calculateNGram(corpusListTrain, self.n)
-            createdNgramMin1 = gramInstance.calculateNGram(corpusListTrain, self.n-1)
-            #calculate probability
-            probInstance = prob.Prob()
-            probList = probInstance.calculateProb(createdNgram, createdNgramMin1, corpusListTest, self.n)
-            #smooth it
-            smoothInstance = smooth.Smooth()
-            NgramSmoothed = smoothInstance.add1(probList)
+
         elif self.case == '3no':
-            print 'Todo 3 no'
+            print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
+            print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
+            print 'Todo 3 no' # same as 2.3 so fix pls
 
 
     #Takes care of provided arguments, if none given use default!
