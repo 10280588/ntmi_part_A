@@ -83,9 +83,7 @@ class Main():
             # Calculate the probability
             probInstance = prob.Prob()
             probList = probInstance.sequenceProb(createdNgram, createdNgramMin1, lineList, self.n)
-            #self.printResult22(probList)
             count = 0
-            print probList
             for key, value in probList.iteritems():
                 if value == 0:
                     count = count + 1
@@ -121,9 +119,6 @@ class Main():
             gramInstance = ngrams.Ngrams()
             createdNgram = gramInstance.calculateNGram(corpusListTrain, self.n)
             createdNgramMin1 = gramInstance.calculateNGram(corpusListTrain, self.n-1)
-            #calculate probability
-            probInstance = prob.Prob()
-            probList = probInstance.calculateProb(createdNgram, createdNgramMin1, corpusListTest, self.n)
             smoothInstance = smooth.Smooth()
             ngramAdd1 = smoothInstance.add1(createdNgram)
             ngramMin1Add1 = smoothInstance.add1(createdNgramMin1)
@@ -137,15 +132,44 @@ class Main():
                     odds = odds*probInstance.calculateProbabilityUsingAdd1(ngramAdd1, ngramMin1Add1, entry)
                 probDictSentence.update({item:odds})
                 print item + '-> odds = ' + str(odds)
+            self.printResult22(probDictSentence)
             count = 0
             for key, value in probDictSentence.iteritems():
                 if value == 0:
                     count = count + 1
-            print 'Percentage of sentences being assigned zero = ' + str(count/len(probList))
+            print 'Percentage of sentences being assigned zero = ' + str(count/len(probDictSentence))
         elif self.case == '3gt':
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
             print 'it would assign 0 whenever one ngram of the sentence doesn\'t occur'
-            corpusLength = len(self.corpus)
+            reader = filereader.Reader()
+            corpusListTrain = reader.fileReader(self.train, self.n)
+            corpusListTest = reader.lineReader(self.test, self.n)
+            corpusLength = len(corpusListTrain)
+            #make ngrams
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(corpusListTrain, self.n)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusListTrain, self.n-1)  
+            smoothInstance = smooth.Smooth()
+            N1 = smoothInstance.calculateN(createdNgram)
+            N2 = smoothInstance.calculateN(createdNgramMin1)
+            ngramGT = smoothInstance.GT(createdNgram, corpusLength, N1)
+            ngramGT2 = smoothInstance.GT(createdNgramMin1, corpusLength, N2)
+            probDictSentence = {}
+            probInstance = prob.Prob()
+            for item in corpusListTest:
+                odds = 1
+                entryList = item.split()
+                for i in range(0, len(entryList)-self.n):
+                    entry = ' '.join(entryList[i+1:i+self.n+1])
+                    odds = odds*probInstance.calculateProbabilityUsingGT(ngramGT, ngramGT2, entry, corpusLength, N1, N2)
+                probDictSentence.update({item:odds})
+                print item + '-> odds = ' + str(odds)
+            self.printResult22(probDictSentence)
+            count = 0
+            for key, value in probDictSentence.iteritems():
+                if value == 0:
+                    count = count + 1
+            print 'Percentage of sentences being assigned zero = ' + str(count/len(probDictSentence))            
 
         elif self.case == '3no':
             print 'Add1 smoothing and GT smoothing will never assign 0 probability to a sentence, whereas without smoothing'
@@ -220,7 +244,7 @@ class Main():
         elif self.smoothing == 'add1':
             self.case = '3add1'
             print 'Do step 3, with add1 smoothing'
-        elif self.smoothing == 'gt':
+        elif self.smoothing == 'gt' or self.smoothing == 'GT':
             self.case = '3gt'
             print 'Do step 3, with Good-Turing smoothing'
         elif self.n > 0:
@@ -312,6 +336,8 @@ class Main():
     #Opens our corpus.txt file and converts it to a list of words.
     def printResult22(self, probList):
         probList = sorted(probList.items(), key=lambda probList: probList[1], reverse=False)
+        print ''
+        print ''
         print 'We have calculated N-gram and the N-1-Gram.'
         print 'Then probability is calculated.'
         print 'We will now display the 25 sequences with the LOWEST probability.'

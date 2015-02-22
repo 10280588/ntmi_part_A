@@ -6,9 +6,6 @@ class Prob():
     # Calculates the probability of an N-gram given an (N-1)-Gram of a file. Uses only sentences of length n (starts/stops not included)
     def calculateProb(self, ngram, ngramMin1, lineList, n):
         probDict = {}
-
-        #f = open(self.probfile, 'r')
-        print lineList
         for line in lineList:
             strList = line.split()
             for i in range(0, n+2):
@@ -53,13 +50,11 @@ class Prob():
                         entryAmount2 = ngramMin1.get(iteminNgramMin1, None)
                         if entryAmount2 != None:
                             odds = odds * (entryAmount/entryAmount2)
-                        probDict.update({line:odds})
+                            probDict.update({line:odds})
         return probDict
 
     def permProb(self, ngram, ngramMin1, lineList, n):
         probDict = {}
-
-        #f = open(self.probfile, 'r')
         for line in lineList:
             strList = line.split()
 
@@ -87,7 +82,6 @@ class Prob():
                         # If the sequence exits in both the Ngram and Ngram -1 calculate the odds
                         odds = occurenceNgram/occurenceNgramMin1
                         probDict.update({(sequence):odds})
-
         return probDict
 
     # This is only for one ngram-combination, can be used for whole sentences
@@ -104,7 +98,17 @@ class Prob():
         odds = entryAmount/(entryAmount2 + len(ngram))
         return odds
 
-    # Exercise doesn't clearly tell how to do this
-    #def calculateProbabilityUsingGT(self, ngram, ngramMin1, corpusLength):
-        #smoothedNgram = smooth.GT(ngram, corpusLength)
+    # Exercise doesn't clearly tell how to do this, so we used the old method for probability
+    def calculateProbabilityUsingGT(self, ngram, ngramMin1, entry, corpusLength, N1, N2):
+        entryAmount = ngram.get(entry, None)
+        entryList = entry.split()
+        entryListWithoutLastWord = entryList[:-1]
+        entryWithoutLastWord = ' '.join(entryListWithoutLastWord)
+        if entryAmount == None:
+            entryAmount = N1[0]/(corpusLength)
+        entryAmount2 = ngramMin1.get(entryWithoutLastWord, None)
+        if entryAmount2 == None:
+            entryAmount2 = N2[0]/(corpusLength)
+        odds = entryAmount/(entryAmount2 + len(ngram))
+        return odds    
     
