@@ -3,15 +3,6 @@ import sys
 import smooth
 
 class Prob():
-    #    if self.case == '2.2':
-    #        self.calculateProb()
-    #    if self.case == '2.3':
-    #        f = open(self.probfile, 'r')
-    #        for line in f:
-    #            probs = self.calculateProbabilityOfString(line)
-    #            self.probDict.update({line:probs})
-    #        print self.probDict
-
     # Calculates the probability of an N-gram given an (N-1)-Gram of a file. Uses only sentences of length n (starts/stops not included)
     def calculateProb(self, ngram, ngramMin1, lineList, n):
         probDict = {}
@@ -82,7 +73,7 @@ class Prob():
         #f = open(self.probfile, 'r')
         for line in lineList:
             strList = line.split()
-        
+
             if n < 3:
                 loop = n + 1
             else:
@@ -111,7 +102,7 @@ class Prob():
         return probDict
 
     # This is only for one ngram-combination, can be used for whole sentences
-    def calculateProbabilityUsingAdd1(self, ngram, ngramMin1, entry): 
+    def calculateProbabilityUsingAdd1(self, ngram, ngramMin1, entry):
         entryAmount = ngram.get(entry, None)
         entryList = entry.split()
         entryListWithoutLastWord = entryList[:-1]
@@ -127,4 +118,4 @@ class Prob():
     # Exercise doesn't clearly tell how to do this
     #def calculateProbabilityUsingGT(self, ngram, ngramMin1, corpusLength):
         #smoothedNgram = smooth.GT(ngram, corpusLength)
-        print 'boe'
+    
