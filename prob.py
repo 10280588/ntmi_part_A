@@ -13,6 +13,7 @@ class Prob():
     # Calculates the probability of an N-gram given an (N-1)-Gram of a file. Uses only sentences of length n (starts/stops not included)
     def calculateProb(self, ngram, ngramMin1, lineList, n):
         probDict = {}
+        print ngram
         #f = open(self.probfile, 'r')
         for line in lineList:
             strList = line.split()

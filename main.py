@@ -53,7 +53,6 @@ class Main():
             mostFreq = gramInstance.mostFrequent(createdNgram)
             mostFreqMin1 = gramInstance.mostFrequent(createdNgramMin1)
             self.printResult21(mostFreq, mostFreqMin1)
-            #TODO: DONE!
         elif self.case == '2.2':
             self.printer22()
             reader = filereader.Reader()
@@ -67,7 +66,6 @@ class Main():
             probInstance = prob.Prob()
             probList = probInstance.calculateProb(createdNgram, createdNgramMin1, lineList, self.n)
             self.printResult22(probList)
-            #TODO: like case 1, classes or methods need to be added
         elif self.case == '2.3':
             #self.printer23()
             ngrams.Ngrams(self.corpusList, self.n, self.m, self.sorted_nGrams)
