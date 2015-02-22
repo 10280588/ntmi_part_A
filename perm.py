@@ -12,31 +12,8 @@ class Permutation():
 
     def allPermutations(self, corpusList):
         permList = []
-        print 'check'
         perms = itertools.permutations(corpusList)
-        print perms
         for perm in perms:
-            #perm = list(perm)
-            print perm
             perm = '<s> '+ ' '.join([str(i) for i in perm]) + ' </s>'
-            print perm
-            perm =  perm.split()
-            permList.extend(perm)
-        print permList
+            permList.append(perm)
         return permList
-
-    def probabilityOfPermutations(self, corpusList):
-        print 'calculating all permutations of the provided words words:'
-        #find all permutations
-        perms = itertools.permutations(self.list)
-        for perm in perms:
-
-            print perm
-            #add start and stop signs
-
-            #calculate probabilities of permutation /// needs to be implemented
-            #prob = calculateProbability(perm)
-            #print
-            #print 'perm: ' + perm
-            #print 'probability ' + prob
-    print ' -------------------------------'
