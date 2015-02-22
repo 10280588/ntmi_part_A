@@ -12,7 +12,6 @@ class Reader():
 
     def fileReader(self, corpus, n):
         corpusList = []
-
         for x in range(1, n):
             corpusList.append(["<s>"])
         f = open(corpus, 'r')
@@ -27,13 +26,7 @@ class Reader():
         for x in range(1, n):
             corpusList.append(["</s>"])
         corpusList = [item for sublist in corpusList for item in sublist]
-
         return corpusList
-
-
-    def changeText(self, corpus, n):
-        corpusList = []
-
 
     def lineReader(self, corpus, n):
         lineList = []

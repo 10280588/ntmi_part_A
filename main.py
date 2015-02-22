@@ -36,7 +36,7 @@ class Main():
             # create instance of Ngram class
             gramInstance = ngrams.Ngrams()
             # create nGram
-            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n)
             mostFreq = gramInstance.mostFrequent(createdNgram)
             sumOfFreq = gramInstance.sumOfFrequencies(mostFreq)
             # Print all results, which are stored in the variables
@@ -48,8 +48,8 @@ class Main():
             #Actually read the file
             corpusList = reader.fileReader(self.corpus, self.n)
             gramInstance = ngrams.Ngrams()
-            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
-            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1, self.m)
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1)
             mostFreq = gramInstance.mostFrequent(createdNgram)
             mostFreqMin1 = gramInstance.mostFrequent(createdNgramMin1)
             self.printResult21(mostFreq, mostFreqMin1)
@@ -60,8 +60,8 @@ class Main():
             lineList = reader.lineReader(self.cp, self.n)
             #create the two ngrams
             gramInstance = ngrams.Ngrams()
-            createdNgram = gramInstance.calculateNGram(corpusList, self.n, self.m)
-            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1, self.m)
+            createdNgram = gramInstance.calculateNGram(corpusList, self.n)
+            createdNgramMin1 = gramInstance.calculateNGram(corpusList, self.n-1)
             # Calculate the probability
             probInstance = prob.Prob()
             probList = probInstance.calculateProb(createdNgram, createdNgramMin1, lineList, self.n)
@@ -73,7 +73,23 @@ class Main():
             prob.Prob(self.case, self.sp, self.n, self.corpusList, self.corpusList2, self.probList, self.sorted_nGrams, self.sorted_nGrams2, self.probDict)
         elif self.case == '2.4':
             self.printer24()
-            perm.Permutation(self.corpus)
+            # create a list
+            reader = filereader.Reader()
+            corpusList = reader.fileReaderStep1(self.corpus)
+            print corpusList
+            permInstance = perm.Permutation()
+            permutations = permInstance.allPermutations(corpusList)
+            gramInstance = ngrams.Ngrams()
+            createdNgram = gramInstance.calculateNGram(permutations, 2)
+            createdNgramMin1 = gramInstance.calculateNGram(permutations, 1)
+            # Calculate the probability
+            probInstance = prob.Prob()
+            #probList = probInstance.calculateProb(createdNgram, createdNgramMin1, permutationS, self.n)
+            mostFreq = gramInstance.mostFrequent(createdNgram)
+            mostFreqMin1 = gramInstance.mostFrequent(createdNgramMin1)
+            self.printResult21(mostFreq, mostFreqMin1)
+            print createdNgram
+            print createdNgramMin1
         elif self.case == '3add1':
             #TODO Add nice print statements
             print '3add1'
@@ -213,7 +229,7 @@ class Main():
         print ''
         print 'The top 10 list of most occuring sequences ([word], [frequency]) for the provided N:'
         #Print the m most frequent ngrams.
-        for i in range(0, 10):
+        for i in range(0, 25):
             #if the user wants a top 10 list, but there are for example only 5 combinations stop showing and display message.
             if i < len(mostFreq):
                 if mostFreq[i][0] != '':

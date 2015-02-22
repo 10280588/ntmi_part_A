@@ -4,9 +4,10 @@
 #
 class Ngrams():
 	# The real calculation of occurences is done in this method
-	def calculateNGram(self, corpus, n, m):
+	def calculateNGram(self, corpus, n):
 		print 'Calculating N-Gram with n = ' + str(n)
 		ngrams = {}
+		print corpus
 		for i in range(0, len(corpus) - (n-1)):
 			sequence = corpus[i];
 			for j in range(1,n):
