@@ -12,72 +12,76 @@ import prob4
 
 class Main():
     def __init__(self):
-        self.trainingCorpus = ''
-        self.developCorpus = ''
-        self.n = 0
+        self.trainSet = ''
+        self.testSet = ''
         
         self.argumentReader()
         self.trainingCorpus = self.fileReader(self.trainingCorpus)
 
         gramInstance = ngrams.Ngrams()
-        createdNgram = gramInstance.calculateNGram(self.trainingCorpus, self.n)
-        createdNgramMin1 = gramInstance.calculateNGram(self.trainingCorpus, self.n-1)
+        trigram = gramInstance.calculateNGram(self.trainingCorpus, 3)
+        bigram = gramInstance.calculateNGram(self.trainingCorpus, 2)
+        unigram = gramInstance.calculateNGram(self.trainingCorpus, 1)
         
-        self.resultPrinter(createdNgram, createdNgramMin1)
+        
+        if self.trainSet == 'minitraining.pos':
+            print 
+            print 'unigram = '
+            print unigram
+            
+            print 
+            print 'bigram = '
+            print bigram
+            
+            print 
+            print 'trigram = '
+            print trigram
+        
+        self.resultPrinter(trigram, bigram)
         probInstance = prob4.Prob()
-        probDict = probInstance.calcProbNgram(createdNgram, createdNgramMin1)
+        probDict = probInstance.calcProbNgram(trigram, bigram)
         print probDict
         
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
         # Make a nice way to handle command line arguments
         parser = argparse.ArgumentParser()
-        # -corpus argumentgit
-        parser.add_argument('-n',  type=int,
-        help='Provide a number (integer) to calculate N-grams with word sequences of length n.')
-        parser.add_argument('-trainingCorpus', help='Provide a text corpus file in the .pos format to perform an N-gram calculation and probabilities.')
-        parser.add_argument('-developCorpus', help='Provide a text corpus file in the .pos format to test our calculations on another corpus.')
+        parser.add_argument('-train-set', help='Provide a text corpus file in the .pos format to perform an N-gram calculation and probabilities.')
+        parser.add_argument('-test-set', help='Provide a text corpus file in the .pos format to test our calculations on another corpus.')
+        parser.add_argument('-test-set-predicted')
         args = parser.parse_args()
         
-        self.trainingCorpus = args.trainingCorpus
-        self.developCorpus = args.developCorpus
-        self.n = args.n
+        self.trainSet = args.train_set
+        self.testSet = args.test_set
         
         # No start/stop statements, sentences longer than 15 words can be ignored.
     def fileReader(self, corpus):
-        corpusList = []
-        tagDict = {}
+        tagList = []
+        tupleList = []
+        
         f = open(corpus, 'r')
         for line in f:
             if (not '=======' in line):
                 lineLength = len(line.split())
                 if lineLength <= 15:
-                    for word in line.split():
-                        if not (( '[' in word) or ( ']' in word)):
-                            print word
-                        if '/' in word:
-                            wordAndTag = word.split('/')
-                            key = wordAndTag[0]
-                            value = wordAndTag[1]
-                            if not ( key in tagDict):
-                                valueList = []
-                                valueList.append(value)
-                                
-                            elif (key in tagDict):
-                                print tagDict.get(key, None)
-                                valueList = tagDict.get(key, None)
-                                valueList.append(value)
-                            if key.isalnum():
-                                corpusList.append(key)
-                            tagDict.update({key : valueList})
+                    for string in line.split():
+                        if not (( '[' in string) or ( ']' in string)):
+                            print string
+                        if '/' in string:
+                            wordAndTag = string.split('/')
+                            word = wordAndTag[0]
+                            tag = wordAndTag[1]
+                            if word.isalnum():
+                                tagList.append(tag)
+                                tupleList.append((word,tag))
             else:
                 num  =5
             #Todo: fileReader
         print 'tagging'
-        print tagDict
-        return corpusList
+        print tupleList
+        return tagList
         
-    def resultPrinter(self, createdNgram, createdNgramMin1):
+    def resultPrinter(self, trigram, bigram):
         print 'Results: '
-        print createdNgram
+        print trigram
         

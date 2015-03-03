@@ -10,9 +10,9 @@ class Prob():
             print 'bikey is:'
             print key
             print biKey
-            denominator = ngram.get(key,None)
+            numerator = ngram.get(key,None)
             if biKey in ngramMin1:
-                numerator = ngramMin1.get(biKey, None)
+                denominator = ngramMin1.get(biKey, None)
             print numerator
             print denominator
             prob = numerator/denominator
