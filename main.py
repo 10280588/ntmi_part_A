@@ -8,7 +8,7 @@ import sys
 import ngrams
 import smooth
 import filereader
-import prob4
+import prob
 
 class Main():
     def __init__(self):
@@ -16,31 +16,30 @@ class Main():
         self.testSet = ''
         
         self.argumentReader()
-        self.trainingCorpus = self.fileReader(self.trainingCorpus)
-
+        self.trainSet = self.fileReader(self.trainSet)
+        
         gramInstance = ngrams.Ngrams()
-        trigram = gramInstance.calculateNGram(self.trainingCorpus, 3)
-        bigram = gramInstance.calculateNGram(self.trainingCorpus, 2)
-        unigram = gramInstance.calculateNGram(self.trainingCorpus, 1)
-        
-        
+        trigram = gramInstance.calculateNGram(self.trainSet, 3)
+        bigram = gramInstance.calculateNGram(self.trainSet, 2)
+        unigram = gramInstance.calculateNGram(self.trainSet, 1)
+
         if self.trainSet == 'minitraining.pos':
             print 
-            print 'unigram = '
-            print unigram
+            #print 'unigram = '
+            #print unigram
             
-            print 
-            print 'bigram = '
-            print bigram
+            #print 
+            #print 'bigram = '
+            #print bigram
             
-            print 
-            print 'trigram = '
-            print trigram
+            #print 
+            #print 'trigram = '
+            #print trigram
         
         self.resultPrinter(trigram, bigram)
-        probInstance = prob4.Prob()
+        probInstance = prob.Prob()
         probDict = probInstance.calcProbNgram(trigram, bigram)
-        print probDict
+        #print probDict
         
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
@@ -60,25 +59,31 @@ class Main():
         tupleList = []
         
         f = open(corpus, 'r')
+        currentLine = ''
         for line in f:
-            if (not '=======' in line):
-                lineLength = len(line.split())
-                if lineLength <= 15:
-                    for string in line.split():
-                        if not (( '[' in string) or ( ']' in string)):
-                            print string
-                        if '/' in string:
-                            wordAndTag = string.split('/')
-                            word = wordAndTag[0]
-                            tag = wordAndTag[1]
-                            if word.isalnum():
-                                tagList.append(tag)
-                                tupleList.append((word,tag))
+            if (not './.' in line):
+                currentLine += line
+            #line = '</s> <s>'
+            #if (not '=======' in line):
+                
             else:
-                num  =5
+                lineLength = len(currentLine.split())
+                if lineLength <= 15:
+                    for string in currentLine.split():
+                        #print string
+                        if not (( '[' in string) or ( ']' in string)):
+                            #print string
+                            if '/' in string:
+                                wordAndTag = string.split('/')
+                                word = wordAndTag[0]
+                                tag = wordAndTag[1]
+                                if word.isalnum():
+                                    tagList.append(tag)
+                                    tupleList.append((word,tag))
+                currentLine = ''
             #Todo: fileReader
         print 'tagging'
-        print tupleList
+        #print tupleList
         return tagList
         
     def resultPrinter(self, trigram, bigram):
