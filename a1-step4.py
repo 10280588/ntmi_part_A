@@ -2,4 +2,4 @@
 import main4
 import ngrams
 if __name__ == "__main__":
-    application = main4.Main()
+    application = main.Main()
