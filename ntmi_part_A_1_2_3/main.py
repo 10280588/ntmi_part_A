@@ -193,6 +193,7 @@ class Main():
             for key, value in probList.iteritems():
                 if value == 0:
                     count = count + 1
+            print count
             self.printResult22(probList)
             print 'Percentage of sentences being assigned zero = ' + str(count/len(probList))
 

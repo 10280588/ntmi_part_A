@@ -15,13 +15,24 @@ class Main():
         self.trainSet = ''
         self.testSet = ''
         
-        self.argumentReader()
-        self.trainSet = self.fileReader(self.trainSet)
+        self.startsym = '<s>'
+        self.stopsym = '</s>'
         
+        self.argumentReader()
+        lists = self.fileReader(self.trainSet)
+        tagList = lists[0]
+        wordTagList = lists[1]
         gramInstance = ngrams.Ngrams()
+        
+        # Ngrams for task model, calculate unigram for count
+        tagCount = gramInstance.calculateNGram(tagList, 1)
+        wordTagCount = gramInstance.calculateNGram(wordTagList, 1)
+
+        #print tagCount
+        print wordTagCount
+        # Ngrams for language model
+        bigram = gramInstance.calculateNGram(self.trainSet, 2)        
         trigram = gramInstance.calculateNGram(self.trainSet, 3)
-        bigram = gramInstance.calculateNGram(self.trainSet, 2)
-        unigram = gramInstance.calculateNGram(self.trainSet, 1)
 
         if self.trainSet == 'minitraining.pos':
             print 
@@ -60,33 +71,39 @@ class Main():
         
         f = open(corpus, 'r')
         currentLine = ''
+        currentSentence = ''
+        tagOccurence = []
+        wordTagList = []
         for line in f:
-            if (not './.' in line):
-                currentLine += line
-            #line = '</s> <s>'
-            #if (not '=======' in line):
+            if not ('======================================' in line):
+                line = line.replace('[','')
+                line = line.replace(']','')
+                line = line.replace('\/', '_')
                 
-            else:
-                lineLength = len(currentLine.split())
-                if lineLength <= 15:
-                    for string in currentLine.split():
-                        #print string
-                        if not (( '[' in string) or ( ']' in string)):
-                            #print string
-                            if '/' in string:
-                                wordAndTag = string.split('/')
-                                word = wordAndTag[0]
-                                tag = wordAndTag[1]
-                                if word.isalnum():
-                                    tagList.append(tag)
-                                    tupleList.append((word,tag))
-                currentLine = ''
+                if not ('./.' in line):
+                    currentLine += line
+                    currentSentence += line
+                else :
+                    currentLine += line
+                    currentSentence += line
+                    currentSentenceList = currentSentence.split()
+                    size = len(currentSentenceList)
+                    sentenceNoTags = ''
+                    sentenceTags = ''
+                    for word in currentSentenceList:
+                        if '/' in word:
+                            wordAndTag = word.split('/')
+                            word = wordAndTag[0]
+                            tag = wordAndTag[1]
+                            wordTagList.append((word,tag))
+                            tagList.append(tag)
+                    currentLine = self.startsym * (size - 1) + currentSentence + self.stopsym * (size - 1)
+                    currentSentence = ''
+
             #Todo: fileReader
         print 'tagging'
-        #print tupleList
-        return tagList
+        return (wordTagList, tagList)
         
     def resultPrinter(self, trigram, bigram):
         print 'Results: '
-        print trigram
         
