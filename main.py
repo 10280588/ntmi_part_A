@@ -22,35 +22,22 @@ class Main():
         lists = self.fileReader(self.trainSet)
         tagList = lists[0]
         wordTagList = lists[1]
-        gramInstance = ngrams.Ngrams()
+        #print wordTagList
         
+        gramInstance = ngrams.Ngrams()
         # Ngrams for task model, calculate unigram for count
         tagCount = gramInstance.calculateNGram(tagList, 1)
         wordTagCount = gramInstance.calculateNGram(wordTagList, 1)
-
-        #print tagCount
-        print wordTagCount
-        # Ngrams for language model
-        bigram = gramInstance.calculateNGram(self.trainSet, 2)        
-        trigram = gramInstance.calculateNGram(self.trainSet, 3)
-
-        if self.trainSet == 'minitraining.pos':
-            print 
-            #print 'unigram = '
-            #print unigram
-            
-            #print 
-            #print 'bigram = '
-            #print bigram
-            
-            #print 
-            #print 'trigram = '
-            #print trigram
         
-        self.resultPrinter(trigram, bigram)
+        # Ngrams for language model
+        wordTagBigram = gramInstance.calculateNGram(tagList, 2)     
+        wordTagTrigram = gramInstance.calculateNGram(tagList, 3)
+        
+        self.resultPrinter(wordTagTrigram, wordTagBigram)
         probInstance = prob.Prob()
-        probDict = probInstance.calcProbNgram(trigram, bigram)
+        #probDict = probInstance.calcProbNgram(trigram, bigram)
         #print probDict
+        probInstance.argMaxTags('a man has a balloon'.split(), tagCount, wordTagCount)
         
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
@@ -78,8 +65,7 @@ class Main():
             if not ('======================================' in line):
                 line = line.replace('[','')
                 line = line.replace(']','')
-                line = line.replace('\/', '_')
-                
+
                 if not ('./.' in line):
                     currentLine += line
                     currentSentence += line
@@ -92,8 +78,9 @@ class Main():
                     sentenceTags = ''
                     for word in currentSentenceList:
                         if '/' in word:
-                            wordAndTag = word.split('/')
+                            wordAndTag = word.rsplit('/', 1)
                             word = wordAndTag[0]
+                            word = word.replace('\\', '')
                             tag = wordAndTag[1]
                             wordTagList.append((word,tag))
                             tagList.append(tag)
@@ -102,7 +89,7 @@ class Main():
 
             #Todo: fileReader
         print 'tagging'
-        return (wordTagList, tagList)
+        return (tagList, wordTagList)
         
     def resultPrinter(self, trigram, bigram):
         print 'Results: '
