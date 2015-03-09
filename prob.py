@@ -46,6 +46,7 @@ class Prob():
         # Language model
         tagLength = len(tag)
         languageProduct = 1
+        probLang = 0
         
         for i in range(0, tagLength-2):
             trigramPartSentence = tag[i] + ' ' + tag[i+1] + ' ' + tag[i+2]
@@ -54,8 +55,8 @@ class Prob():
             if trigramCount != None:
                 bigramCount = bigram.get(trigramPart, None)
                 if bigramCount != 0:
-                    prob3 = trigramCount/bigramCount
-            languageProduct = languageProduct * prob3
+                    probLang = trigramCount/bigramCount
+            languageProduct = languageProduct * probLang
             
         # Task model
         taskProduct = 1    
