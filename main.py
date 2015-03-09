@@ -1,5 +1,5 @@
 #######
-# Copyright: Menno van Leeuwen (10280588), Jelmer Alphenaar (10655751), Sosha Happel 
+# Copyright: Menno van Leeuwen (10280588), Jelmer Alphenaar (10655751), Sosha Happel
 # Assignment: NTMI step 4
 #
 from __future__ import division
@@ -14,48 +14,48 @@ class Main():
     def __init__(self):
         self.trainSet = ''
         self.testSet = ''
-        
+
         self.startsym = '<start>/START '
         self.stopsym = ' <stop>/STOP'
-        
+
         self.argumentReader()
         lists = self.fileReader(self.trainSet)
         allSentencesList = lists[0]
         tagList = lists[1]
         wordTagList = lists[2]
-        
+
         gramInstance = ngrams.Ngrams()
         # Ngrams for task model, calculate unigram for count
         tagCount = gramInstance.calculateNGram(tagList, 1)
         wordTagCount = gramInstance.calculateNGram(wordTagList, 1)
-        
+
         # Ngrams for language model
         wordTagbigram = gramInstance.calculateNGram(tagList, 2)
         wordTagTrigram = gramInstance.calculateNGram(tagList, 3)
-        
+
         self.resultPrinter(wordTagTrigram)
         probInstance = prob.Prob()
         for sentenceList in allSentencesList:
             if len(sentenceList) <= 19: # Max length of sentence is 15 + start/stops
                 sentence = ' '.join(sentenceList)
                 probInstance.argMaxAllTags(sentence.split(), tagCount, wordTagCount, wordTagbigram, wordTagTrigram)
-                
+
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
         # Make a nice way to handle command line arguments
         parser = argparse.ArgumentParser()
-        parser.add_argument('-train-set', help='Provide a text corpus file in the .pos format to perform an N-gram calculation and probabilities.')
-        parser.add_argument('-test-set', help='Provide a text corpus file in the .pos format to test our calculations on another corpus.')
-        parser.add_argument('-test-set-predicted')
+        parser.add_argument('-train-set', help='Provide a text corpus file in the .pos format to perform an N-gram calculation and probabilities.', required=True)
+        parser.add_argument('-test-set', help='Provide a text corpus file in the .pos format to test our calculations on another corpus.', required=True)
+        parser.add_argument('-test-set-predicted', required=True)
         args = parser.parse_args()
-        
+
         self.trainSet = args.train_set
         self.testSet = args.test_set
-        
+
     def fileReader(self, corpus):
         tagList = []
         tupleList = []
-        
+
         f = open(corpus, 'r')
         allSentencesList = []
         currentSentence = ''
@@ -75,7 +75,7 @@ class Main():
                     size = len(currentSentenceList)
                     currentSentence = self.startsym * 2 + currentSentence + self.stopsym * 2 # slechts 2 starts nodig, we gebruiken alleen trigrams
                     currentSentenceList = currentSentence.split()
-                    
+
                     for word in currentSentenceList:
                         if '/' in word:
                             wordAndTag = word.rsplit('/', 1)
@@ -91,7 +91,6 @@ class Main():
                     currentSentenceList = []
         print 'tagging'
         return (allSentencesList, tagList, wordTagList)
-        
+
     def resultPrinter(self, trigram):
         print 'Results: '
-        
