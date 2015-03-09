@@ -1,7 +1,8 @@
-get first tag in tagged corpus if multiple tags given
 # Still using the training set as test set? make separate function for this
-wordTagValueList.update({item[0]: item[1]}) # Deze kan toch gewoon in de loop hierboven?
-get accuracy (is this per sentence or per word?)
+get accuracy - tagcorrect divided by len(tags)
 smoothing
-is maxlength correct (assuming start/stops)?
 prob not efficiently calculated?
+log probability
+
+unimportant:
+is maxlength correct (assuming start/stops)?

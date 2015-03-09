@@ -23,23 +23,22 @@ class Main():
         oldTime = datetime.datetime.time(datetime.datetime.now())
         
         self.argumentReader()
-        lists = self.fileReader(self.trainSet)
-        allSentencesList = lists[0]
-        tagList = lists[1]
-        wordTagList = lists[2]
+        trainingCorpuslist = self.fileReader(self.trainSet)
         
         gramInstance = ngrams.Ngrams()
         # Ngrams for task model, calculate unigram for count
-        tagCount = gramInstance.calculateNGram(tagList, 1)
-        wordTagCount = gramInstance.calculateNGram(wordTagList, 1)
+        tagCount = gramInstance.calculateNGram(trainingCorpuslist[1], 1)
+        wordTagCount = gramInstance.calculateNGram(trainingCorpuslist[2], 1)
         
         # Ngrams for language model
-        wordTagbigram = gramInstance.calculateNGram(tagList, 2)
-        wordTagTrigram = gramInstance.calculateNGram(tagList, 3)
+        wordTagbigram = gramInstance.calculateNGram(trainingCorpuslist[1], 2)
+        wordTagTrigram = gramInstance.calculateNGram(trainingCorpuslist[1], 3)
         
         self.resultPrinter(wordTagTrigram)
         probInstance = prob.Prob()
-        for sentenceList in allSentencesList:
+        
+        testCorpusList = self.fileReader(self.trainSet)
+        for sentenceList in testCorpusList[0]:
             if len(sentenceList) <= 19: # Max length of sentence is 15 + start/stops
                 sentence = ' '.join(sentenceList)
                 probInstance.argMaxAllTags(sentence.split(), tagCount, wordTagCount, wordTagbigram, wordTagTrigram)
@@ -93,6 +92,9 @@ class Main():
                             word = word.replace('\\', '')
                             currentSentenceNoTags.append(word)
                             tag = wordAndTag[1]
+                            if '|' in tag:
+                                split = tag.split('|')
+                                tag = split[0]
                             wordTagList.append((word,tag))
                             tagList.append(tag)
                     allSentencesList.append(currentSentenceNoTags)
