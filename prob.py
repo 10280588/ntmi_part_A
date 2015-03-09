@@ -6,100 +6,67 @@ import itertools
 class Prob():
     
     # most probable tag sequence given input sentence (list of words)
-    # wordtaglist = bigrams
-    # taglist = ngrams
-    def argMaxTags(self, sentence, tagCount, wordTagCount):
-        print tagCount
-        alltags = []
-        tagOccurence = {}
-        wordTagValueList = []
+    def argMaxAllTags(self, sentence, tagCount, wordTagCount, bigram, trigram):
+        wordTagValue = []
+        wordTagValueList = {}
         tags = []
         tagList = []
+        
         for word in sentence:
             for key, value in wordTagCount.iteritems():
-                
                 if key[0] == word:
-                    wordTagValueList.append((key, value))
-            print 'zijn dit ze ' + str(wordTagValueList)
+                    wordTagValue.append((key, value))
             
-            for occurences in wordTagValueList:
-                print occurences
+            for occurences in wordTagValue:
                 tupleWordTag = occurences[0]
                 tags.append(tupleWordTag[1])
                 
-            print tags
             tagList.append(tags)
-            wordTagValueList = []
+            for item in wordTagValue:
+                wordTagValueList.update({item[0]: item[1]})
+            wordTagValue = []
             tags = []
-            
-            print tagList
-            #print itertools.product(*tagList)
-        count = 0
-        for element in itertools.product(*tagList):
-            count = count+1
-            print element
-            
-            #tagOccurence = {}
-            
-        #for word in
-        print 'hoi ' + str(count)
-        self.taskModel(sentence, count, tags, wordTagValueList, wordTagCount)
         
-    def taskModel(self, sentence, permutationCount, tags, wordTagListCount, tagListCount):
-        print sentence
-        print tags
-        count = 0
-        print 'hoi2 ' + str(permutationCount)
-        for i in range(0, permutationCount):
-            for word in sentence:
-                c = 1
-            #print wordTagListCount
-                #for tag in tags[count]:
-                 #   count = count
-            #count = count + 1
-                #tagListCount.get(tags[count]) #no
-                #wordTagListCount/tagListCount
-        #for tuples, value in wordTagCount.iteritems():
-        #return wordTagListCount/tagListCount
+        # Get the best probability from all permutations possible
+        maxProb = 0
+        bestTag = []
+        for tag in itertools.product(*tagList):
+            probTags = self.probTagsGivenSentence(sentence, tag, wordTagValueList, tagCount, bigram, trigram)
+            if probTags > maxProb:
+                maxProb = probTags
+                bestTag = tag
+        tag = tag[2:-2]
+        currentSentence = sentence[2:-2]
+        print 'The current sentence is: ' + ' '.join(currentSentence)
+        print 'The tags gotten from the formula are: ' + str(tag)
+        print 'The formula gives a probability of: ' + str(maxProb)
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        #count = 0
-        #for word in sentence:
-        #    print word
-        #    for tuples, value in tagOccurence.iteritems():
-            #    if tuples[0] == word:
-            #        print tuples[1]
-            
-        #print tagOccurence
-            #alltags.append(tags)
-           
-        #print alltags
+    # no smoothing used yet
+    # using trigrams
+    def probTagsGivenSentence(self, sentence, tag, wordTagListCount, tagListCount, bigram, trigram):
         
-        #for element in alltags:#itertools.product(alltags):
-        #    print element
+        # Language model
+        tagLength = len(tag)
+        languageProduct = 1
         
-    
-    #def calcProbNgram(self, ngram, ngramMin1):
-    #    probDict = {}
-    #    for key in ngram:
-    #        biKey = key.rsplit(' ',1)[0]
-    #        numerator = ngram.get(key,None)
-    #        if biKey in ngramMin1:
-    #            denominator = ngramMin1.get(biKey, None)
-    #        prob = numerator/denominator
-    #        probDict.update({key: prob})
+        for i in range(0, tagLength-2):
+            trigramPartSentence = tag[i] + ' ' + tag[i+1] + ' ' + tag[i+2]
+            trigramPart = tag[i] + ' ' + tag[i+1]
+            trigramCount = trigram.get(trigramPartSentence, None)
+            if trigramCount != None:
+                bigramCount = bigram.get(trigramPart, None)
+                if bigramCount != 0:
+                    prob3 = trigramCount/bigramCount
+            languageProduct = languageProduct * prob3
             
+        # Task model
+        taskProduct = 1    
+        for i in range(0, tagLength):
+            wordTagValue = wordTagListCount.get((sentence[i], tag[i]))
+            tagValue = tagListCount.get(tag[i])
+            probTag = wordTagValue/tagValue
+            taskProduct = taskProduct * probTag
             
-            
-          
-       # return probDict
+        # Acquired values used to calculate probability
+        probTagsGivenSentenceValue = taskProduct * languageProduct
+        return probTagsGivenSentenceValue
