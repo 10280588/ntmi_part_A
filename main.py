@@ -9,7 +9,9 @@ import ngrams
 import smooth
 import filereader
 import prob
+import datetime
 
+# Still using the training set as test set?
 class Main():
     def __init__(self):
         self.trainSet = ''
@@ -17,7 +19,13 @@ class Main():
 
         self.startsym = '<start>/START '
         self.stopsym = ' <stop>/STOP'
+<<<<<<< HEAD
 
+=======
+
+        oldTime = datetime.datetime.time(datetime.datetime.now())
+
+>>>>>>> be9bad51aa567a320efef2f15073b91d255070ea
         self.argumentReader()
         lists = self.fileReader(self.trainSet)
         allSentencesList = lists[0]
@@ -39,6 +47,13 @@ class Main():
             if len(sentenceList) <= 19: # Max length of sentence is 15 + start/stops
                 sentence = ' '.join(sentenceList)
                 probInstance.argMaxAllTags(sentence.split(), tagCount, wordTagCount, wordTagbigram, wordTagTrigram)
+
+        newTime = datetime.datetime.time(datetime.datetime.now())
+        print
+        print oldTime
+        print newTime
+
+        # Show accuracy
 
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):

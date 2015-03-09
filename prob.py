@@ -11,6 +11,7 @@ class Prob():
         wordTagValueList = {}
         tags = []
         tagList = []
+        #correctTags = []
 
         for word in sentence:
             for key, value in wordTagCount.iteritems():
@@ -23,7 +24,7 @@ class Prob():
 
             tagList.append(tags)
             for item in wordTagValue:
-                wordTagValueList.update({item[0]: item[1]})
+                wordTagValueList.update({item[0]: item[1]}) # Deze kan toch gewoon in de loop hierboven?
             wordTagValue = []
             tags = []
 
@@ -42,11 +43,15 @@ class Prob():
         print 'The tags gotten from the formula are: ' + str(tag)
         print 'The formula gives a probability of (logscale): ' + str(maxProb)
 
+        # calculate if correct
+        # Still needs smoothing
     def probTagsGivenSentence(self, sentence, tag, wordTagListCount, tagListCount, bigram, trigram):
 
         # Language model
         tagLength = len(tag)
         languageProduct = 1
+
+        probLang = 0
 
         for i in range(0, tagLength-2):
             trigramPartSentence = tag[i] + ' ' + tag[i+1] + ' ' + tag[i+2]
@@ -55,8 +60,8 @@ class Prob():
             if trigramCount != None:
                 bigramCount = bigram.get(trigramPart, None)
                 if bigramCount != 0:
-                    prob3 = trigramCount/bigramCount
-            languageProduct = languageProduct * prob3
+                    probLang = trigramCount/bigramCount
+            languageProduct = languageProduct * probLang
 
         # Task model
         taskProduct = 1
