@@ -11,6 +11,7 @@ class Prob():
         wordTagValueList = {}
         tags = []
         tagList = []
+        #correctTags = []
         
         for word in sentence:
             for key, value in wordTagCount.iteritems():
@@ -23,7 +24,7 @@ class Prob():
                 
             tagList.append(tags)
             for item in wordTagValue:
-                wordTagValueList.update({item[0]: item[1]})
+                wordTagValueList.update({item[0]: item[1]}) # Deze kan toch gewoon in de loop hierboven?
             wordTagValue = []
             tags = []
         
@@ -40,7 +41,9 @@ class Prob():
         print 'The current sentence is: ' + ' '.join(currentSentence)
         print 'The tags gotten from the formula are: ' + str(tag)
         print 'The formula gives a probability of: ' + str(maxProb)
+        # calculate if correct
             
+    # Still needs smoothing        
     def probTagsGivenSentence(self, sentence, tag, wordTagListCount, tagListCount, bigram, trigram):
         
         # Language model
