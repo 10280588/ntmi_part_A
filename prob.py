@@ -41,8 +41,6 @@ class Prob():
         print 'The tags gotten from the formula are: ' + str(tag)
         print 'The formula gives a probability of: ' + str(maxProb)
             
-    # no smoothing used yet
-    # using trigrams
     def probTagsGivenSentence(self, sentence, tag, wordTagListCount, tagListCount, bigram, trigram):
         
         # Language model
