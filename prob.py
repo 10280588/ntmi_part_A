@@ -21,10 +21,9 @@ class Prob():
             for occurences in wordTagValue:
                 tupleWordTag = occurences[0]
                 tags.append(tupleWordTag[1])
+                wordTagValueList.update({occurences[0]: occurences[1]})
                 
             tagList.append(tags)
-            for item in wordTagValue:
-                wordTagValueList.update({item[0]: item[1]}) # Deze kan toch gewoon in de loop hierboven?
             wordTagValue = []
             tags = []
         
