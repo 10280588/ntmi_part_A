@@ -46,24 +46,25 @@ class Prob():
         tagLength = len(tag)
         languageProduct = 1
 
-        probLang = 0
-
         for i in range(0, tagLength-2):
+            probLang = 0
             trigramPartSentence = tag[i] + ' ' + tag[i+1] + ' ' + tag[i+2]
             trigramPart = tag[i] + ' ' + tag[i+1]
             trigramCount = trigram.get(trigramPartSentence, None)
             if trigramCount != None:
                 bigramCount = bigram.get(trigramPart, None)
-                if bigramCount != 0:
+                if bigramCount != None:
                     probLang = trigramCount/bigramCount
             languageProduct = languageProduct * probLang
 
         # Task model
         taskProduct = 1
         for i in range(0, tagLength):
-            wordTagValue = wordTagListCount.get((sentence[i], tag[i]))
-            tagValue = tagListCount.get(tag[i])
-            probTag = wordTagValue/tagValue
+            probTag = 0
+            wordTagValue = wordTagListCount.get((sentence[i], tag[i]), None)
+            tagValue = tagListCount.get(tag[i], None)
+            if wordTagValue != None and tagValue != None:
+                probTag = wordTagValue/tagValue
             taskProduct = taskProduct * probTag
 
         # Acquired values used to calculate probability
