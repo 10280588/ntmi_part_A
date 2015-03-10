@@ -1,3 +1,8 @@
+#######
+# Copyright: Menno van Leeuwen (10280588), Jelmer Alphenaar (10655751), Yuri Sturkenboom (10639748)
+# Assignment: NTMI step 4
+#
+
 from __future__ import division
 import sys
 import smooth

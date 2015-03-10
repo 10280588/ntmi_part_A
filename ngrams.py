@@ -1,6 +1,6 @@
 #######
-# Copyright: Menno van Leeuwen (10280588)
-# Assignment: NTMI step 1
+# Copyright: Menno van Leeuwen (10280588), Jelmer Alphenaar (10655751), Yuri Sturkenboom (10639748)
+# Assignment: NTMI step 4
 #
 class Ngrams():
 	# The real calculation of occurences is done in this method

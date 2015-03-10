@@ -1,5 +1,5 @@
 #######
-# Copyright: Menno van Leeuwen (10280588), Jelmer Alphenaar (10655751), Sosha Happel
+# Copyright: Menno van Leeuwen (10280588), Jelmer Alphenaar (10655751), Yuri Sturkenboom (10639748)
 # Assignment: NTMI step 4
 #
 from __future__ import division
@@ -43,8 +43,11 @@ class Main():
         probInstance = prob.Prob()
         testCorpusList = self.fileReader(self.testSet)
         fileWrite = open(self.testSetPredicted,'w')
-
+        totalConsidered = 0
+        totalCorrect = 0
+        accCount = 0
         for sentenceAndTagList in testCorpusList[3]:
+            accCount = accCount + 1
             if len(sentenceAndTagList[0]) <= 19: # Max length of sentence is 15 + start/stops
                 probMaxTags = probInstance.argMaxAllTags(sentenceAndTagList[0], tagCount, wordTagCount, wordTagbigram, wordTagTrigram)
                 correctTags = sentenceAndTagList[1]
@@ -70,7 +73,8 @@ class Main():
                 print 'Correctly tagged: ' + str(correctAmount-4) + '/' + str(len(sentenceAndTagList[0])-4)
                 print 'The formula gives a probability of (logscale): ' + str(probMaxTags[2])
                 print
-
+                totalCorrect+= correctAmount-4
+                
         fileWrite.close()
 
         newTime = datetime.datetime.time(datetime.datetime.now())
@@ -106,8 +110,6 @@ class Main():
             if not ('======================================' in line):
                 line = line.replace('[','')
                 line = line.replace(']','')
-                #line = line.replace(',/,','')
-
 
                 if not ('./.' in line):
                     currentSentence += line
