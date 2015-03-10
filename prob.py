@@ -25,7 +25,7 @@ class Prob():
                     wordTagValue.append((key, value))
             if found != 1:
                 key = (word, 'ANY')
-                wordTagValue.append((key, 1)) # Assign 1 to unseen words, 
+                wordTagValue.append((key, 1)) # Assign 1 to unseen words, this is our smoothing
             for occurences in wordTagValue:
                 tupleWordTag = occurences[0]
                 tags.append(tupleWordTag[1])
