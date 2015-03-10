@@ -50,11 +50,11 @@ class Main():
                 correctTags = sentenceAndTagList[1]
                 tagsFound = probMaxTags[1]
                 count = 0
-                correctAmount = 4 # The start and stop statements are always correct
+                correctAmount = 0 # The start and stop statements are always correct, so distract 4 later on
                 for i in range(0, len(sentenceAndTagList[0])):
                     if len(probMaxTags[1]) > 0:
-                        if tagsFound[count] == correctTags[count] and tagsFound[count] != 'ANY': # We used something like the add-1 smoothing to get 
-                                                                                                 # a random tag in this location to not get an empty tag list.
+                        if tagsFound[count] == correctTags[count]: # We used something like the add-1 smoothing to get 
+                                                                   # a random tag in this location to not get an empty tag list.
                             correctAmount = correctAmount + 1
                         count = count + 1
                 bestTag = probMaxTags[1]
@@ -62,16 +62,16 @@ class Main():
                 fileWrite.write('The current sentence is: ' + ' '.join(probMaxTags[0]) + '\n')
                 fileWrite.write('The tags gotten from the formula are: ' + str(bestTag[2:-2]) + '\n')
                 fileWrite.write('The correct tags were: ' + str(correctTags[2:-2]) + '\n')
-                fileWrite.write('Correctly tagged: ' + str(correctAmount) + '/' + str(len(sentenceAndTagList[0])-4) + '\n')
+                fileWrite.write('Correctly tagged: ' + str(correctAmount-4) + '/' + str(len(sentenceAndTagList[0])-4) + '\n')
                 fileWrite.write('The formula gives a probability of (logscale): ' + str(probMaxTags[2]) + '\n\n')
                 
                 print 'The current sentence is: ' + ' '.join(probMaxTags[0])
                 print 'The tags gotten from the formula are: ' + str(bestTag[2:-2])
                 print 'The correct tags were: ' + str(correctTags[2:-2])
-                print 'Correctly tagged: ' + str(correctAmount) + '/' + str(len(sentenceAndTagList[0])-4)
+                print 'Correctly tagged: ' + str(correctAmount-4) + '/' + str(len(sentenceAndTagList[0])-4)
                 print 'The formula gives a probability of (logscale): ' + str(probMaxTags[2])
                 print
-                totalCorrect+= correctAmount
+                totalCorrect+= correctAmount-4
                 totalConsidered += len(sentenceAndTagList[0])-4
         fileWrite.close()
 

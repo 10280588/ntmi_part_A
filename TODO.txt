@@ -1,2 +1,2 @@
-smoothing
+smoothing in a good way
 prob not efficiently calculated? (not using viterbi i think)
