@@ -41,7 +41,7 @@ class Main():
         wordTagList = lists[2]
 
         probInstance = prob.Prob()
-        testCorpusList = self.fileReader(self.trainSet)
+        testCorpusList = self.fileReader(self.testSet)
         fileWrite = open(self.testSetPredicted,'w')
         
         for sentenceAndTagList in testCorpusList[3]:
