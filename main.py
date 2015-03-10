@@ -64,6 +64,8 @@ class Main():
                         if tagsFound[count] == correctTags[count]:
                             correctAmount = correctAmount + 1
                         count = count + 1
+                if correctAmount == 0:
+                    correctAmount = 4
                 bestTag = probMaxTags[1]
 
                 fileWrite.write('The current sentence is: ' + ' '.join(probMaxTags[0]) + '\n')
