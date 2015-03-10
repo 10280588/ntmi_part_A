@@ -17,6 +17,7 @@ class Prob():
         tags = []
         tagList = []
 
+        # for each word, find all posible tags
         for word in sentence:
             found = 0
             for key, value in wordTagCount.iteritems():
@@ -50,6 +51,7 @@ class Prob():
         return (currentSentence, bestTag, maxProbLog)
 
         # We used some hacky smoothing technique above
+        
     def probTagsGivenSentence(self, sentence, tag, wordTagListCount, tagListCount, bigram, trigram):
         
         tagLength = len(tag)

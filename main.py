@@ -18,6 +18,10 @@ class Main():
         self.startsym = '<start>/START '
         self.stopsym = ' <stop>/STOP'
 
+        # determines how many lines should be read before stopping
+        # set to 99999999 to read until EOF (takes VERY long!!!)
+        maxLinesToRead = 100
+
         oldTime = datetime.datetime.time(datetime.datetime.now())
 
         self.argumentReader()
@@ -41,11 +45,25 @@ class Main():
         probInstance = prob.Prob()
         testCorpusList = self.fileReader(self.testSet)
         fileWrite = open(self.testSetPredicted,'w')
+
+        # these two variables are to deterine accuracy later on
         totalConsidered = 0
         totalCorrect = 0
         
+        # used to terminate earlier to save time
+        acCount = 0
+
         for sentenceAndTagList in testCorpusList[3]:
+
+            # if we don't want to read any more lines, break out of the loop
+            if acCount > maxLinesToRead:
+                break
+
             if len(sentenceAndTagList[0]) <= 19: # Max length of sentence is 15 + start/stops
+
+                acCount += 1
+
+                # find the tag sequence that is the most likely
                 probMaxTags = probInstance.argMaxAllTags(sentenceAndTagList[0], tagCount, wordTagCount, wordTagbigram, wordTagTrigram)
                 correctTags = sentenceAndTagList[1]
                 tagsFound = probMaxTags[1]
@@ -59,12 +77,14 @@ class Main():
                         count = count + 1
                 bestTag = probMaxTags[1]
 
+                # the following 5 lines write to an output file
                 fileWrite.write('The current sentence is: ' + ' '.join(probMaxTags[0]) + '\n')
                 fileWrite.write('The tags gotten from the formula are: ' + str(bestTag[2:-2]) + '\n')
                 fileWrite.write('The correct tags were: ' + str(correctTags[2:-2]) + '\n')
                 fileWrite.write('Correctly tagged: ' + str(correctAmount-4) + '/' + str(len(sentenceAndTagList[0])-4) + '\n')
                 fileWrite.write('The formula gives a probability of (logscale): ' + str(probMaxTags[2]) + '\n\n')
                 
+                # these 5 lines contain the same information as the previous ones but these are output to the terminal
                 print 'The current sentence is: ' + ' '.join(probMaxTags[0])
                 print 'The tags gotten from the formula are: ' + str(bestTag[2:-2])
                 print 'The correct tags were: ' + str(correctTags[2:-2])
@@ -77,8 +97,9 @@ class Main():
 
         print "Accuracy = " + str(totalCorrect) + "/"+ str(totalConsidered) + "(" + str((totalCorrect / totalConsidered) * 100) + "%)"
 
+        # get the new time, so a benchmark can be made 
         newTime = datetime.datetime.time(datetime.datetime.now())
-        print
+
         print oldTime
         print newTime
 
@@ -94,6 +115,10 @@ class Main():
         self.trainSet = args.train_set
         self.testSet = args.test_set
         self.testSetPredicted = args.test_set_predicted
+
+    # This method parses a file based on the rules given by the corpus.
+    # Certain symbols are ignored, and the rest of the words and their tags are saved. 
+    # Returns: a list of sentences, a list of tags, a list of words combined with tags, a list of sentences combined with their tags
 
     def fileReader(self, corpus):
         tagList = []

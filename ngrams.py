@@ -4,6 +4,7 @@
 #
 class Ngrams():
 	# The real calculation of occurences is done in this method
+	# It generates ngrams of length n given a corpus.
 	def calculateNGram(self, corpus, n):
 		print 'Calculating N-Gram with n = ' + str(n)
 		ngrams = {}
