@@ -1,8 +1,2 @@
-# Still using the training set as test set? make separate function for this
-get accuracy - tagcorrect divided by len(tags)
 smoothing
-prob not efficiently calculated?
-log probability
-
-unimportant:
-is maxlength correct (assuming start/stops)?
+prob not efficiently calculated? (not using viterbi i think)

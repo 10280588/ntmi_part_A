@@ -11,7 +11,6 @@ class Prob():
         wordTagValueList = {}
         tags = []
         tagList = []
-        #correctTags = []
 
         for word in sentence:
             for key, value in wordTagCount.iteritems():
@@ -34,15 +33,12 @@ class Prob():
             probTags = self.probTagsGivenSentence(sentence, tag, wordTagValueList, tagCount, bigram, trigram)
             if probTags > maxProb:
                 maxProb = probTags
-                maxProb = math.log10(maxProb)
+                if maxProb > 0:
+                    maxProb = math.log10(maxProb)
                 bestTag = tag
-        tag = tag[2:-2]
         currentSentence = sentence[2:-2]
-        print 'The current sentence is: ' + ' '.join(currentSentence)
-        print 'The tags gotten from the formula are: ' + str(tag)
-        print 'The formula gives a probability of (logscale): ' + str(maxProb)
+        return (currentSentence, bestTag, maxProb)
 
-        # calculate if correct
         # Still needs smoothing
     def probTagsGivenSentence(self, sentence, tag, wordTagListCount, tagListCount, bigram, trigram):
 

@@ -25,6 +25,7 @@ class Main():
         self.argumentReader()
         trainingCorpuslist = self.fileReader(self.trainSet)
         
+        print 'Tagging'
         gramInstance = ngrams.Ngrams()
         # Ngrams for task model, calculate unigram for count
         tagCount = gramInstance.calculateNGram(trainingCorpuslist[1], 1)
@@ -39,21 +40,40 @@ class Main():
         tagList = lists[1]
         wordTagList = lists[2]
 
-        self.resultPrinter(wordTagTrigram)
         probInstance = prob.Prob()
-        
         testCorpusList = self.fileReader(self.trainSet)
-        for sentenceList in testCorpusList[0]:
-            if len(sentenceList) <= 19: # Max length of sentence is 15 + start/stops
-                sentence = ' '.join(sentenceList)
-                probInstance.argMaxAllTags(sentence.split(), tagCount, wordTagCount, wordTagbigram, wordTagTrigram)
-
+        fileWrite = open(self.testSetPredicted,'w')
+        
+        for sentenceAndTagList in testCorpusList[3]:
+            if len(sentenceAndTagList[0]) <= 19: # Max length of sentence is 15 + start/stops
+                probMaxTags = probInstance.argMaxAllTags(sentenceAndTagList[0], tagCount, wordTagCount, wordTagbigram, wordTagTrigram)
+                correctTags = sentenceAndTagList[1]
+                tagsFound = probMaxTags[1]
+                count = 0
+                correctAmount = 0
+                for i in range(0, len(sentenceAndTagList[0])):
+                    if tagsFound[count] == correctTags[count]:
+                        correctAmount = correctAmount + 1
+                    count = count + 1
+                bestTag = probMaxTags[1]
+                fileWrite.write('The current sentence is: ' + ' '.join(probMaxTags[0]) + '\n')
+                fileWrite.write('The tags gotten from the formula are: ' + str(bestTag[2:-2]) + '\n')
+                fileWrite.write('The correct tags were: ' + str(correctTags[2:-2]) + '\n')
+                fileWrite.write('Correctly tagged: ' + str(correctAmount-4) + '/' + str(len(sentenceAndTagList[0])-4) + '\n')
+                fileWrite.write('The formula gives a probability of (logscale): ' + str(probMaxTags[2]) + '\n\n')
+                print 'The current sentence is: ' + ' '.join(probMaxTags[0])
+                print 'The tags gotten from the formula are: ' + str(bestTag[2:-2])
+                print 'The correct tags were: ' + str(correctTags[2:-2])
+                print 'Correctly tagged: ' + str(correctAmount-4) + '/' + str(len(sentenceAndTagList[0])-4)
+                print 'The formula gives a probability of (logscale): ' + str(probMaxTags[2])        
+                print
+                
+        fileWrite.close()
+        
         newTime = datetime.datetime.time(datetime.datetime.now())
         print
         print oldTime
         print newTime
-
-        # Show accuracy
 
     #Takes care of provided arguments, if none given use default!
     def argumentReader(self):
@@ -66,6 +86,7 @@ class Main():
 
         self.trainSet = args.train_set
         self.testSet = args.test_set
+        self.testSetPredicted = args.test_set_predicted
 
     def fileReader(self, corpus):
         tagList = []
@@ -73,9 +94,10 @@ class Main():
 
         f = open(corpus, 'r')
         allSentencesList = []
+        allSentencesListWithTags = []
         currentSentence = ''
         currentSentenceNoTags = []
-        tagOccurence = []
+        tagSentence = []
         wordTagList = []
         for line in f:
             if not ('======================================' in line):
@@ -103,12 +125,11 @@ class Main():
                                 tag = split[0]
                             wordTagList.append((word,tag))
                             tagList.append(tag)
+                            tagSentence.append(tag)
                     allSentencesList.append(currentSentenceNoTags)
+                    allSentencesListWithTags.append((currentSentenceNoTags, tagSentence))
                     currentSentence = ''
                     currentSentenceNoTags = []
                     currentSentenceList = []
-        print 'tagging'
-        return (allSentencesList, tagList, wordTagList)
-
-    def resultPrinter(self, trigram):
-        print 'Results: '
+                    tagSentence = []
+        return (allSentencesList, tagList, wordTagList, allSentencesListWithTags)
