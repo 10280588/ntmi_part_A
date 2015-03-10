@@ -24,26 +24,26 @@ class Main():
 
         self.argumentReader()
         trainingCorpuslist = self.fileReader(self.trainSet)
-        
+
         print 'Tagging'
         gramInstance = ngrams.Ngrams()
         # Ngrams for task model, calculate unigram for count
         tagCount = gramInstance.calculateNGram(trainingCorpuslist[1], 1)
         wordTagCount = gramInstance.calculateNGram(trainingCorpuslist[2], 1)
-        
+
         # Ngrams for language model
         wordTagbigram = gramInstance.calculateNGram(trainingCorpuslist[1], 2)
         wordTagTrigram = gramInstance.calculateNGram(trainingCorpuslist[1], 3)
-        
+
         lists = self.fileReader(self.trainSet)
         allSentencesList = lists[0]
         tagList = lists[1]
         wordTagList = lists[2]
 
         probInstance = prob.Prob()
-        testCorpusList = self.fileReader(self.trainSet)
+        testCorpusList = self.fileReader(self.testSet)
         fileWrite = open(self.testSetPredicted,'w')
-        
+
         for sentenceAndTagList in testCorpusList[3]:
             if len(sentenceAndTagList[0]) <= 19: # Max length of sentence is 15 + start/stops
                 probMaxTags = probInstance.argMaxAllTags(sentenceAndTagList[0], tagCount, wordTagCount, wordTagbigram, wordTagTrigram)
@@ -52,9 +52,10 @@ class Main():
                 count = 0
                 correctAmount = 0
                 for i in range(0, len(sentenceAndTagList[0])):
-                    if tagsFound[count] == correctTags[count]:
-                        correctAmount = correctAmount + 1
-                    count = count + 1
+                    if len(probMaxTags[1]) > 0:
+                        if tagsFound[count] == correctTags[count]:
+                            correctAmount = correctAmount + 1
+                        count = count + 1
                 bestTag = probMaxTags[1]
                 fileWrite.write('The current sentence is: ' + ' '.join(probMaxTags[0]) + '\n')
                 fileWrite.write('The tags gotten from the formula are: ' + str(bestTag[2:-2]) + '\n')
@@ -65,11 +66,11 @@ class Main():
                 print 'The tags gotten from the formula are: ' + str(bestTag[2:-2])
                 print 'The correct tags were: ' + str(correctTags[2:-2])
                 print 'Correctly tagged: ' + str(correctAmount-4) + '/' + str(len(sentenceAndTagList[0])-4)
-                print 'The formula gives a probability of (logscale): ' + str(probMaxTags[2])        
+                print 'The formula gives a probability of (logscale): ' + str(probMaxTags[2])
                 print
-                
+
         fileWrite.close()
-        
+
         newTime = datetime.datetime.time(datetime.datetime.now())
         print
         print oldTime
@@ -103,6 +104,8 @@ class Main():
             if not ('======================================' in line):
                 line = line.replace('[','')
                 line = line.replace(']','')
+                #line = line.replace(',/,','')
+
 
                 if not ('./.' in line):
                     currentSentence += line
