@@ -33,16 +33,17 @@ class Prob():
 
         # Get the best probability from all permutations possible
         maxProb = 0
+        maxProbLog = 0
         bestTag = []
         for tag in itertools.product(*tagList):
             probTags = self.probTagsGivenSentence(sentence, tag, wordTagValueList, tagCount, bigram, trigram)
             if probTags > maxProb:
                 maxProb = probTags
                 if maxProb > 0:
-                    maxProb = math.log10(maxProb)
+                    maxProbLog = math.log10(maxProb)
                 bestTag = tag
         currentSentence = sentence[2:-2]
-        return (currentSentence, bestTag, maxProb)
+        return (currentSentence, bestTag, maxProbLog)
 
         # Still needs smoothing
     def probTagsGivenSentence(self, sentence, tag, wordTagListCount, tagListCount, bigram, trigram):
