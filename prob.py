@@ -18,10 +18,14 @@ class Prob():
         tagList = []
 
         for word in sentence:
+            found = 0
             for key, value in wordTagCount.iteritems():
                 if key[0] == word:
+                    found = 1
                     wordTagValue.append((key, value))
-
+            if found != 1:
+                key = (word, 'ANY')
+                wordTagValue.append((key, 1)) # Assign 1 to unseen words, 
             for occurences in wordTagValue:
                 tupleWordTag = occurences[0]
                 tags.append(tupleWordTag[1])
@@ -45,32 +49,27 @@ class Prob():
         currentSentence = sentence[2:-2]
         return (currentSentence, bestTag, maxProbLog)
 
-        # Still needs smoothing
+        # We used some hacky smoothing technique above
     def probTagsGivenSentence(self, sentence, tag, wordTagListCount, tagListCount, bigram, trigram):
-
-        # Language model
+        
         tagLength = len(tag)
+        
+        # Language model
         languageProduct = 1
-
         for i in range(0, tagLength-2):
-            probLang = 0
             trigramPartSentence = tag[i] + ' ' + tag[i+1] + ' ' + tag[i+2]
             trigramPart = tag[i] + ' ' + tag[i+1]
-            trigramCount = trigram.get(trigramPartSentence, None)
-            if trigramCount != None:
-                bigramCount = bigram.get(trigramPart, None)
-                if bigramCount != None:
-                    probLang = trigramCount/bigramCount
+            trigramCount = trigram.get(trigramPartSentence, 0) + 1
+            bigramCount = bigram.get(trigramPart, 0) + 1
+            probLang = trigramCount/bigramCount
             languageProduct = languageProduct * probLang
 
         # Task model
         taskProduct = 1
         for i in range(0, tagLength):
-            probTag = 0
-            wordTagValue = wordTagListCount.get((sentence[i], tag[i]), None)
-            tagValue = tagListCount.get(tag[i], None)
-            if wordTagValue != None and tagValue != None:
-                probTag = wordTagValue/tagValue
+            wordTagValue = wordTagListCount.get((sentence[i], tag[i]), 0) + 1
+            tagValue = tagListCount.get(tag[i], 0) + 1
+            probTag = wordTagValue/tagValue
             taskProduct = taskProduct * probTag
 
         # Acquired values used to calculate probability

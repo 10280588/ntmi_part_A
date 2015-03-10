@@ -7,11 +7,9 @@ import argparse
 import sys
 import ngrams
 import smooth
-#import filereader
 import prob
 import datetime
 
-# Still using the training set as test set?
 class Main():
     def __init__(self):
         self.trainSet = ''
@@ -27,7 +25,7 @@ class Main():
 
         print 'Tagging'
         gramInstance = ngrams.Ngrams()
-        # Ngrams for task mo-del, calculate unigram for count
+        # Ngrams for task model, calculate unigram for count
         tagCount = gramInstance.calculateNGram(trainingCorpuslist[1], 1)
         wordTagCount = gramInstance.calculateNGram(trainingCorpuslist[2], 1)
 
@@ -43,54 +41,38 @@ class Main():
         probInstance = prob.Prob()
         testCorpusList = self.fileReader(self.testSet)
         fileWrite = open(self.testSetPredicted,'w')
-<<<<<<< HEAD
         totalConsidered = 0
         totalCorrect = 0
-        accCount = 0
+        
         for sentenceAndTagList in testCorpusList[3]:
-            accCount = accCount + 1
-=======
-
-        totalConsidered = 0
-        totalCorrect = 0
-
-        acCount = 0
-        for sentenceAndTagList in testCorpusList[3]:
-            if acCount > 200:
-                break
-
->>>>>>> a9e38dcf4520f8c2b051177dfde7d3161e8effce
             if len(sentenceAndTagList[0]) <= 19: # Max length of sentence is 15 + start/stops
-                acCount += 1
                 probMaxTags = probInstance.argMaxAllTags(sentenceAndTagList[0], tagCount, wordTagCount, wordTagbigram, wordTagTrigram)
                 correctTags = sentenceAndTagList[1]
                 tagsFound = probMaxTags[1]
                 count = 0
-                correctAmount = 0
+                correctAmount = 4 # The start and stop statements are always correct
                 for i in range(0, len(sentenceAndTagList[0])):
                     if len(probMaxTags[1]) > 0:
-                        if tagsFound[count] == correctTags[count]:
+                        if tagsFound[count] == correctTags[count] and tagsFound[count] != 'ANY': # We used something like the add-1 smoothing to get 
+                                                                                                 # a random tag in this location to not get an empty tag list.
                             correctAmount = correctAmount + 1
                         count = count + 1
-                if correctAmount == 0:
-                    correctAmount = 4
                 bestTag = probMaxTags[1]
 
                 fileWrite.write('The current sentence is: ' + ' '.join(probMaxTags[0]) + '\n')
                 fileWrite.write('The tags gotten from the formula are: ' + str(bestTag[2:-2]) + '\n')
                 fileWrite.write('The correct tags were: ' + str(correctTags[2:-2]) + '\n')
-                fileWrite.write('Correctly tagged: ' + str(correctAmount-4) + '/' + str(len(sentenceAndTagList[0])-4) + '\n')
+                fileWrite.write('Correctly tagged: ' + str(correctAmount) + '/' + str(len(sentenceAndTagList[0])-4) + '\n')
                 fileWrite.write('The formula gives a probability of (logscale): ' + str(probMaxTags[2]) + '\n\n')
                 
                 print 'The current sentence is: ' + ' '.join(probMaxTags[0])
                 print 'The tags gotten from the formula are: ' + str(bestTag[2:-2])
                 print 'The correct tags were: ' + str(correctTags[2:-2])
-                print 'Correctly tagged: ' + str(correctAmount-4) + '/' + str(len(sentenceAndTagList[0])-4)
+                print 'Correctly tagged: ' + str(correctAmount) + '/' + str(len(sentenceAndTagList[0])-4)
                 print 'The formula gives a probability of (logscale): ' + str(probMaxTags[2])
                 print
-                totalCorrect+= correctAmount-4
+                totalCorrect+= correctAmount
                 totalConsidered += len(sentenceAndTagList[0])-4
-                print 'Total correctly tagged: ' + str(totalConsidered) + '/' + str(totalConsidered)
         fileWrite.close()
 
         print "Accuracy = " + str(totalCorrect) + "/"+ str(totalConsidered) + "(" + str((totalCorrect / totalConsidered) * 100) + "%)"
@@ -128,10 +110,6 @@ class Main():
             if not ('======================================' in line):
                 line = line.replace('[','')
                 line = line.replace(']','')
-<<<<<<< HEAD
-=======
-                line = line.replace(',/,','')
->>>>>>> a9e38dcf4520f8c2b051177dfde7d3161e8effce
 
                 if not ('./.' in line):
                     currentSentence += line
