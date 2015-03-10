@@ -19,15 +19,10 @@ class Main():
 
         self.startsym = '<start>/START '
         self.stopsym = ' <stop>/STOP'
-<<<<<<< HEAD
-
-=======
 
         oldTime = datetime.datetime.time(datetime.datetime.now())
 
->>>>>>> be9bad51aa567a320efef2f15073b91d255070ea
         self.argumentReader()
-<<<<<<< HEAD
         trainingCorpuslist = self.fileReader(self.trainSet)
         
         gramInstance = ngrams.Ngrams()
@@ -39,22 +34,11 @@ class Main():
         wordTagbigram = gramInstance.calculateNGram(trainingCorpuslist[1], 2)
         wordTagTrigram = gramInstance.calculateNGram(trainingCorpuslist[1], 3)
         
-=======
         lists = self.fileReader(self.trainSet)
         allSentencesList = lists[0]
         tagList = lists[1]
         wordTagList = lists[2]
 
-        gramInstance = ngrams.Ngrams()
-        # Ngrams for task model, calculate unigram for count
-        tagCount = gramInstance.calculateNGram(tagList, 1)
-        wordTagCount = gramInstance.calculateNGram(wordTagList, 1)
-
-        # Ngrams for language model
-        wordTagbigram = gramInstance.calculateNGram(tagList, 2)
-        wordTagTrigram = gramInstance.calculateNGram(tagList, 3)
-
->>>>>>> 51a64f3d490e343aec4f189faffab01789297dbb
         self.resultPrinter(wordTagTrigram)
         probInstance = prob.Prob()
         
